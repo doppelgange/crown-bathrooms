@@ -2,9 +2,16 @@
 @import url(http://fonts.googleapis.com/css?family=Roboto:400,100,300,500,700);
 @import url(http://fonts.googleapis.com/css?family=Volkhov:400italic);
 /* var text-decoration */
-/*--
-Header Start
---*/
+body {
+  font-family: "Open Sans", sans-serif;
+  -webkit-font-smoothing: antialiased; }
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: "Roboto", sans-serif; }
+
+/*
+ *Header Start
+ */
 header {
   background: #2c3e50;
   padding: 5px 0; }
@@ -98,5 +105,24 @@ footer {
 .nav-sidebar > .active > a:focus {
   background-color: #e67e22;
   transition: all 0.3s ease; }
+
+/*
+ * Login form
+ */
+.form-auth {
+  max-width: 350px;
+  margin: 40px auto;
+  background: #f0f0f0;
+  border-radius: 5px;
+  box-shadow: 0px 0px 5px #ecf0f1; }
+  .form-auth .form-auth-wrap {
+    padding: 20px 20px 40px 20px; }
+  .form-auth h2 {
+    font-size: 20px;
+    text-align: center;
+    padding: 20px;
+    border-radius: 5px 5px 0 0;
+    color: #ecf0f1;
+    background: #e67e22; }
 
 /*# sourceMappingURL=backend.css.map */
