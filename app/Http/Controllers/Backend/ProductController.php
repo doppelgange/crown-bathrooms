@@ -2,85 +2,92 @@
 
 namespace App\Http\Controllers\Backend;
 
-use Illuminate\Http\Request;
-use App\Http\Controllers;
+use App\Base\Controllers\BackendController;
+use App\Http\Requests\ProductRequest;
 use App\Http\Requests;
+use App\Product;
+use Laracasts\Flash\Flash;
 
-class ProductController extends Controller
+class ProductController extends BackendController
 {
     /**
-     * Display a listing of the resource.
+     * Display a listing of the product.
      *
-     * @return \Illuminate\Http\Response
+     * @param Product $product
+     * @return Response
      */
-    public function index()
+    public function index(Product $product)
     {
-        //
+        $products = $product->paginate();
+        return view($this->viewPath("index"), compact('products'));
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Store a newly created product in storage
      *
-     * @return \Illuminate\Http\Response
+     * @param ProductRequest $request
+     * @return Response
      */
-    public function create()
+    public function store(ProductRequest $request)
     {
-        //
+        $model = Product::create($request->all());
+        $resource = $this->saveImageFromRequest($request,$model);
+        if(!is_null($resource)){
+            $model->resources()->attach($resource->id, ['type' => 'image']);
+        }
+
+        $model->id ? Flash::success(trans('backend.create.success')) : Flash::error(trans('backend.create.fail'));
+        return $this->redirectRoutePath('index');
+        return $this->createFlashRedirect(Product::class, $request);
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Display the specified product.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param Product $product
+     * @return Response
      */
-    public function store(Request $request)
+    public function show(Product $product)
     {
-        //
+        return $this->viewPath("show", $product);
     }
 
     /**
-     * Display the specified resource.
+     * Show the form for editing the specified product.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param Product $product
+     * @return Response
      */
-    public function show($id)
+    public function edit(Product $product)
     {
-        //
+        return $this->getForm($product);
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Update the specified product in storage.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param Product $product
+     * @param ProductRequest $request
+     * @return Response
      */
-    public function edit($id)
+    public function update(Product $product, ProductRequest $request)
     {
-        //
+        $resource = $this->saveImageFromRequest($request,$product);
+        if(!is_null($resource)){
+            $product->resources()->attach($resource->id, ['type' => 'image']);
+        }
+
+        return $this->saveFlashRedirect($product, $request);
     }
 
     /**
-     * Update the specified resource in storage.
+     * Remove the specified product from storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param  Product  $product
+     * @return Response
      */
-    public function update(Request $request, $id)
+    public function destroy(Product $product)
     {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
+        return $this->destroyFlashRedirect($product);
     }
 }

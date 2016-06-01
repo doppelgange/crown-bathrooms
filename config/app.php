@@ -52,7 +52,7 @@ return [
     |
     */
 
-    'timezone' => 'UTC',
+    'timezone' => 'Pacific\Auckland',
 
     /*
     |--------------------------------------------------------------------------
@@ -160,6 +160,9 @@ return [
          * External service provider
          */
         Collective\Html\HtmlServiceProvider::class,
+        Kris\LaravelFormBuilder\FormBuilderServiceProvider::class,
+        Laracasts\Flash\FlashServiceProvider::class,
+        Yajra\Datatables\DatatablesServiceProvider::class,
 
     ],
 
@@ -209,6 +212,9 @@ return [
 
         'Form' => Collective\Html\FormFacade::class,
         'Html' => Collective\Html\HtmlFacade::class,
+        'FormBuilder' => 'Kris\LaravelFormBuilder\Facades\FormBuilder',
+        'Flash'             => Laracasts\Flash\Flash::class,
+        'Datatables'        => Yajra\Datatables\Datatables::class,
 
     ],
 

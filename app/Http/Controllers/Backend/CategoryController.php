@@ -2,87 +2,93 @@
 
 namespace App\Http\Controllers\Backend;
 
+use App\Base\Controllers\BackendController;
+use App\Forms\Backend\CategoryForm;
+use App\Http\Requests\CategoryRequest;
+use App\Resource;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Requests;
+use App\Category;
 
-class CategoryController extends Controller
+class CategoryController extends BackendController
 {
-
     /**
-     * Display a listing of the resource.
+     * Display a listing of the category.
      *
-     * @return \Illuminate\Http\Response
+     * @param Category $category
+     * @return Response
+     * @internal param CategoryDataTable $dataTable
      */
-    public function index()
+    public function index(Category $category)
     {
-        return view('backend.categories.index');
-
+        $categories = $category->paginate();
+        return view($this->viewPath("index"), compact('categories'));
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Store a newly created category in storage
      *
-     * @return \Illuminate\Http\Response
+     * @param CategoryRequest $request
+     * @param Category $category
+     * @return Response
      */
-    public function create()
+    public function store(CategoryRequest $request,Category $category)
     {
-        return view('backend.categories.create');
+        $resource = $this->saveImageFromRequest($request,$category);
+        if(!is_null($resource)){
+            $request['image_id'] = $resource->id;
+        }
+        return $this->createFlashRedirect(Category::class, $request);
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Display the specified category.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param Category $category
+     * @return Response
      */
-    public function store(Request $request)
+    public function show(Category $category)
     {
-        //
+        return $this->viewPath("show", $category);
     }
 
     /**
-     * Display the specified resource.
+     * Show the form for editing the specified category.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param Category $category
+     * @return Response
      */
-    public function show($id)
+    public function edit(Category $category)
     {
-        //
+        return $this->getForm($category);
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Update the specified category in storage.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param Category $category
+     * @param CategoryRequest $request
+     * @return Response
      */
-    public function edit($id)
+    public function update(Category $category, CategoryRequest $request)
     {
-        //
+        $resource = $this->saveImageFromRequest($request,$category);
+        if(!is_null($resource)){
+            $request['image_id'] = $resource->id;
+        }
+
+        return $this->saveFlashRedirect($category, $request);
     }
 
     /**
-     * Update the specified resource in storage.
+     * Remove the specified category from storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param  Category  $category
+     * @return Response
      */
-    public function update(Request $request, $id)
+    public function destroy(Category $category)
     {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
+        return $this->destroyFlashRedirect($category);
     }
 }

@@ -20,6 +20,7 @@ $sidebar-color-active:#e67e22;
 body {
     font-family: $open-sans;
     -webkit-font-smoothing: antialiased;
+    padding-top: 50px;
 }
 
 
@@ -33,9 +34,8 @@ h1,h2,h3,h4,h5,h6 {
 
 
 header {
-    background: $header-background-color;
-    padding: 5px 0;
     .navbar {
+        background: $header-background-color;
         margin-bottom: 0px;
         border: 0px;
     }
@@ -112,7 +112,7 @@ footer {
 @media (min-width: 768px) {
     .sidebar {
         position: fixed;
-        top: 60px;
+        top: 50px;
         bottom: 0;
         left: 0;
         z-index: 1000;
@@ -160,10 +160,10 @@ footer {
 }
 
 
+//
+// Login form
+// --------------------------------------------------
 
-/*
- * Login form
- */
 .form-auth{
     max-width: 350px;
     margin: 40px auto;
@@ -182,3 +182,9 @@ footer {
         background: $sidebar-color-active;
     }
 }
+
+//
+// main page
+// --------------------------------------------------
+
+.main{ min-height: 500px;}

@@ -4,7 +4,8 @@
 /* var text-decoration */
 body {
   font-family: "Open Sans", sans-serif;
-  -webkit-font-smoothing: antialiased; }
+  -webkit-font-smoothing: antialiased;
+  padding-top: 50px; }
 
 h1, h2, h3, h4, h5, h6 {
   font-family: "Roboto", sans-serif; }
@@ -12,26 +13,26 @@ h1, h2, h3, h4, h5, h6 {
 /*
  *Header Start
  */
-header {
+header .navbar {
   background: #2c3e50;
-  padding: 5px 0; }
-  header .navbar {
-    margin-bottom: 0px;
-    border: 0px; }
-  header .navbar-brand {
-    padding-top: 5px; }
-  header .navbar-default {
-    background: none;
-    border: 0px; }
-    header .navbar-default .navbar-nav {
-      padding-top: 10px; }
-      header .navbar-default .navbar-nav li a {
-        color: #333333;
-        padding: 10px 26px;
-        font-size: 15px; }
-        font
+  margin-bottom: 0px;
+  border: 0px; }
+
+header .navbar-brand {
+  padding-top: 5px; }
+
+header .navbar-default {
+  background: none;
+  border: 0px; }
+  header .navbar-default .navbar-nav {
+    padding-top: 10px; }
+    header .navbar-default .navbar-nav li a {
+      color: #333333;
+      padding: 10px 26px;
+      font-size: 15px; }
+      font
 header .navbar-default .navbar-nav li a:hover {
-          color: #000; }
+        color: #000; }
 
 /*--
 footer Start
@@ -71,7 +72,7 @@ footer {
 @media (min-width: 768px) {
   .sidebar {
     position: fixed;
-    top: 60px;
+    top: 50px;
     bottom: 0;
     left: 0;
     z-index: 1000;
@@ -106,9 +107,6 @@ footer {
   background-color: #e67e22;
   transition: all 0.3s ease; }
 
-/*
- * Login form
- */
 .form-auth {
   max-width: 350px;
   margin: 40px auto;
@@ -124,5 +122,8 @@ footer {
     border-radius: 5px 5px 0 0;
     color: #ecf0f1;
     background: #e67e22; }
+
+.main {
+  min-height: 500px; }
 
 /*# sourceMappingURL=backend.css.map */

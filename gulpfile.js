@@ -14,7 +14,7 @@ var elixir = require('laravel-elixir');
 
 elixir(function(mix) {
     mix.sass('app.scss');
-    mix.sass('frontend.scss');
+    mix.sass(['frontend.scss','_yamm.scss'],'css/frontend.css');
     mix.sass('backend.scss');
 
     mix.styles([
@@ -33,5 +33,10 @@ elixir(function(mix) {
         'jssor.slider.min.js'
     ],'public/js/main.js');
 
-    mix.version(['css/app.css','css/frontend.css','css/backend.css','js/main.js']);
+    mix.version([
+        'css/app.css',
+        'css/frontend.css',
+        'css/backend.css',
+        'js/main.js'
+    ]);
 });

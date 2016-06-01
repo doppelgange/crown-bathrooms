@@ -6,5 +6,24 @@ use Illuminate\Database\Eloquent\Model;
 
 class Product extends Model
 {
-    //
+    protected $fillable =  ['name', 'code', 'category_id','material','description','color' ,'width','depth','price','special_price'];
+
+    /*
+     * Get parent category
+     */
+    public function category(){
+        return $this->belongsTo('App\Category');
+    }
+
+    public function resources(){
+        return $this->belongsToMany('App\Resource','product_resource')->withTimestamps();
+    }
+
+    public function images(){
+        return $this->belongsToMany('App\Resource','product_resource')->wherePivot('type', 'image');
+    }
+
+    public function attachments(){
+        return $this->belongsToMany('App\Resource','product_resource')->wherePivot('type', 'attachment');
+    }
 }
