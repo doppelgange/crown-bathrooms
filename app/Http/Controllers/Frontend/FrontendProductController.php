@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Frontend;
 
 use App\Category;
 use App\Http\Controllers\Controller;
+use App\Product;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
@@ -18,8 +19,14 @@ class FrontendProductController extends Controller
      */
     public function index(Category $category)
     {
-        dd($category->products());
-        return view('frontend.product.index',$category);
+
+        if(is_null($category->id)){
+            $products = Product::paginate();
+        }else{
+            $products = Product::whereIn('category_id',$category->getSubCategoryRecursively())
+                ->paginate();
+        }
+        return view('frontend.product.index',compact(['products','category']));
     }
 
     /**

@@ -1,0 +1,96 @@
+/*!
+ * Yamm!3 - Yet another megamenu for Bootstrap 3
+ * http://geedmo.github.com/yamm3
+ *
+ * @geedmo - Licensed under the MIT license
+ */
+@import url(http://fonts.googleapis.com/css?family=Open+Sans:400,300,600);
+.yamm .nav, .yamm .collapse, .yamm .dropup, .yamm .dropdown {
+  position: static; }
+
+.yamm .container {
+  position: relative; }
+
+.yamm .dropdown-menu {
+  left: auto; }
+
+.yamm .yamm-content {
+  padding: 20px 30px; }
+
+.yamm .dropdown.yamm-fw .dropdown-menu {
+  left: 0;
+  right: 0; }
+
+/*--
+Common Css
+--*/
+body {
+  font-family: "Open Sans", sans-serif;
+  -webkit-font-smoothing: antialiased; }
+
+/*--
+Header Start
+--*/
+header {
+  background: #fff;
+  padding: 20px 0; }
+  header .navbar {
+    margin-bottom: 0px;
+    border: 0px; }
+  header .navbar-brand {
+    padding-top: 5px; }
+  header .navbar-default {
+    background: none;
+    border: 0px; }
+    header .navbar-default .navbar-nav {
+      padding-top: 10px; }
+      header .navbar-default .navbar-nav li a {
+        color: #333333;
+        padding: 10px 26px;
+        font-size: 15px; }
+        font
+header .navbar-default .navbar-nav li a:hover {
+          color: #000; }
+
+/*--
+footer Start
+--*/
+footer {
+  background: #F5F5F5;
+  text-align: center;
+  padding-top: 48px;
+  padding-bottom: 55px; }
+  footer p {
+    font-size: 13px;
+    line-height: 25px;
+    color: #919191; }
+  footer a {
+    color: #595959; }
+  footer .footer-menu {
+    padding-bottom: 25px; }
+    footer .footer-menu ul {
+      margin: 0px;
+      padding: 0px; }
+      footer .footer-menu ul li {
+        display: inline-block;
+        padding: 0px 20px; }
+        footer .footer-menu ul li a {
+          display: inline-block;
+          color: #494949; }
+          footer .footer-menu ul li a:hover {
+            color: #000; }
+
+/*
+ * Top bar
+ */
+.top-bar {
+  background: #2c3e50; }
+  .top-bar a {
+    color: #ecf0f1;
+    display: inline-block;
+    padding: 5px; }
+    .top-bar a:hover {
+      color: rgba(236, 240, 241, 0.8);
+      text-decoration: none; }
+
+/*# sourceMappingURL=frontend.css.map */

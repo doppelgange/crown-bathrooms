@@ -85,7 +85,6 @@ class CategoriesTableSeeder extends Seeder
             ['parent_category_id'=>12,'name'=>'Heated Towel Ladders','image_id'=>''],
             ['parent_category_id'=>12,'name'=>'Heated Towel Rails','image_id'=>''],
             ['parent_category_id'=>12,'name'=>'Un-Heated Towel Rails','image_id'=>''],
-            ['parent_category_id'=>12,'name'=>'View All','image_id'=>''],
 
             ['parent_category_id'=>13,'name'=>'Accessible Toilets','image_id'=>''],
             ['parent_category_id'=>13,'name'=>'Accessible Basins','image_id'=>''],

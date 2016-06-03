@@ -1,3 +1,19 @@
+<style>
+    .dropdown .dropdown-menu{
+        display: none;
+        opacity: 0;
+
+        -moz-transition:    all 1000ms ease;
+        -webkit-transition: all 1000ms ease;
+        -o-transition:      all 1000ms ease;
+        -ms-transition:     all 1000ms ease;
+        transition:         all 1000ms ease;
+    }
+    .dropdown:hover .dropdown-menu {
+        display: block;
+        opacity: 1;
+    }
+</style>
 <div class="container">
     <div class="col-md-12">
         <!-- header Nav Start -->
@@ -16,12 +32,33 @@
                     </a>
                 </div>
                 <!-- Collect the nav links, forms, and other content for toggling -->
-                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <div class="collapse navbar-collapse" id="menu">
                     <ul class="nav navbar-nav navbar-right">
-                        <li><a href="/">Bathroom</a></li>
-                        <li><a href="#">Kitchen</a></li>
+                        @foreach($rootCategories as $rootCategory)
+                        <li class="dropdown"><a href="#" data-toggle="dropdown" class="dropdown-toggle">{{$rootCategory->name}}<b class="caret"></b></a>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <div class="yamm-content">
+                                        <div class="row">
+                                            @foreach($rootCategory->subCategories as $subCategory)
+                                            <div class="col-sm-3">
+                                                <a href="{{route('category.{category}.product.index',[$subCategory->id])}}" target="_blank">
+                                                    <div class="thumbnail"><img alt="260x130" src="{{$subCategory->image_url}}">
+                                                        <div class="caption">
+                                                            <span>{{$subCategory->name}}</span>
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </div>
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </li>
+                        @endforeach
                         <li><a href="#">New Arrival</a></li>
-                        <li><a href="#">Outlet</a></li>
+                        <li><a href="http://www.trademe.co.nz/stores/crown-bathrooms" target="_blank">Outlet</a></li>
                         <li><a href="#">Catalog</a></li>
                     </ul>
                 </div><!-- /.navbar-collapse -->
@@ -29,3 +66,8 @@
         </nav>
     </div>
 </div>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/vue/1.0.24/vue.min.js"></script>
+<script>
+
+</script>
+{{--<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>--}}

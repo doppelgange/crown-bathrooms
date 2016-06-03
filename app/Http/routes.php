@@ -19,5 +19,5 @@ Route::resource('/backend/category', 'Backend\CategoryController');
 Route::resource('/backend/product', 'Backend\ProductController');
 
 Route::get('/product', 'Frontend\FrontendProductController@index');
-Route::get('/category/{category}/product', 'Frontend\FrontendProductController@index');
+Route::resource('/category/{category}/product', 'Frontend\FrontendProductController');
 

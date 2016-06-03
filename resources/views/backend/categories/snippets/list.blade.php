@@ -21,9 +21,9 @@
                         {{$category->name}}
                     </a>
                 </td>
-                <td>@if($category->parent)
-                        <a href="{{route('backend.category.show', ['id' => $category->parent->id])}}">
-                            {{$category->parent->name}}
+                <td>@if($category->parentCategory)
+                        <a href="{{route('backend.category.show', ['id' => $category->parentCategory->id])}}">
+                            {{$category->parentCategory->name}}
                         </a>
                     @else
                         {{$category->rootCategoryName}}

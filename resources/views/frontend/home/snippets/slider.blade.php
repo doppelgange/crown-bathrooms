@@ -14,7 +14,7 @@
         ];
 
         var jssor_1_options = {
-            $AutoPlay: false,
+            $AutoPlay: true,
             $SlideDuration: 800,
             $SlideEasing: $Jease$.$OutQuint,
             $CaptionSliderOptions: {

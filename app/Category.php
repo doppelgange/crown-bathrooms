@@ -16,7 +16,7 @@ class Category extends Model
     /*
      * Get parent category
      */
-    public function parent(){
+    public function parentCategory(){
         return $this->belongsTo('App\Category','parent_category_id','id');
     }
 
@@ -32,8 +32,8 @@ class Category extends Model
      * @return string
      */
     public function getParentCategoryNameAttribute(){
-        $parent = $this->parent;
-        return is_null($parent)?$this->rootCategoryName:$parent->name;
+        $parentCategory = $this->parentCategory;
+        return is_null($parentCategory)?$this->rootCategoryName:$parentCategory->name;
     }
 
     /*
@@ -49,6 +49,58 @@ class Category extends Model
     public function getImageUrlAttribute(){
 
         return !is_null($this->image)? '/storage/'.$this->image->path:"http://placehold.it/150x150.png";
+    }
+
+    /**
+     * This function is to return a list of sub category id recursively
+     * @return array
+     */
+    public function getSubCategoryRecursively($type ='id'){
+        $subCategoryList = [];
+        switch($type){
+            case 'id':
+                $subCategoryList[] = $this->id;
+                break;
+            case 'array':
+                $subCategoryList[] = $this->toArray();
+                break;
+            case 'object':
+                $subCategoryList[] = $this;
+                break;
+        }
+        $subCategories = $this->subCategories;
+        if(count($subCategories)>0){
+            foreach($subCategories as $subCategory){
+                $subCategoryList = array_merge($subCategoryList,$subCategory->getSubCategoryRecursively($type));
+            }
+
+        }
+        return $subCategoryList;
+    }
+
+    /**
+     * @param string $type id, array, object
+     * @return array
+     */
+    public function getParentCategoryRecursively($type ='id'){
+        $parentCategoryList = [];
+        switch($type){
+            case 'id':
+                $parentCategoryList[] = $this->id;
+                break;
+            case 'array':
+                $parentCategoryList[] = $this->toArray();
+                break;
+            case 'object':
+                $parentCategoryList[] = $this;
+                break;
+        }
+        $parentCategory = $this->parentCategory;
+        if(!is_null($parentCategory)){
+            $parentCategoryList = array_merge($parentCategory->getParentCategoryRecursively($type),$parentCategoryList);
+
+        }
+        return $parentCategoryList;
     }
 
 }
