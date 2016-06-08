@@ -32,12 +32,14 @@ class FrontendProductController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param Category $category
+     * @param Product $product
      * @return \Illuminate\Http\Response
+     * @internal param int $id
      */
-    public function show($id)
+    public function show(Category $category,Product $product)
     {
-        return view('frontend.product.show');
+        return view('frontend.product.show')->with(compact('product','category'));
     }
 
 }

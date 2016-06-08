@@ -18,9 +18,9 @@ body {
     -webkit-font-smoothing: antialiased;
 }
 
-/*--
-Header Start
---*/
+//
+// Header
+// --------------------------------------------------
 
 header {
     background: #fff;
@@ -31,6 +31,7 @@ header {
     }
     .navbar-brand {
         padding-top: 5px;
+        margin-top:-12px;
     }
     .navbar-default {
         background: none;
@@ -41,7 +42,7 @@ header {
                 a {
                     color: #333333;
                     padding: 10px 26px;
-                    font-size: 15px;
+                    font-size: 20px;
                     font
                     &:hover {
                         color: #000;
@@ -89,9 +90,9 @@ footer {
     }
 }
 
-/*
- * Top bar
- */
+//
+// Top bar
+// --------------------------------------------------
 
 .top-bar{
     background:$dark-background-color;
@@ -103,6 +104,30 @@ footer {
             color:rgba($light-color,0.8);
             text-decoration: none;
         }
+    }
+}
+
+
+//
+// Breadcrumb
+// --------------------------------------------------
+.breadcrumb-current{margin: 0px 5px 5px 10px;}
+
+//
+// Product item
+// --------------------------------------------------
+.product-item{
+    a{
+        text-decoration: none;
+    }
+    .caption{
+        font-size: 1.2em;
+    }
+}
+.price{
+    color:#666;
+    .amount::before{
+        content:'$';
     }
 }
 

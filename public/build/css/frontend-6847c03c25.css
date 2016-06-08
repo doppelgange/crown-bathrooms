@@ -28,9 +28,6 @@ body {
   font-family: "Open Sans", sans-serif;
   -webkit-font-smoothing: antialiased; }
 
-/*--
-Header Start
---*/
 header {
   background: #fff;
   padding: 20px 0; }
@@ -38,7 +35,8 @@ header {
     margin-bottom: 0px;
     border: 0px; }
   header .navbar-brand {
-    padding-top: 5px; }
+    padding-top: 5px;
+    margin-top: -12px; }
   header .navbar-default {
     background: none;
     border: 0px; }
@@ -47,7 +45,7 @@ header {
       header .navbar-default .navbar-nav li a {
         color: #333333;
         padding: 10px 26px;
-        font-size: 15px; }
+        font-size: 20px; }
         font
 header .navbar-default .navbar-nav li a:hover {
           color: #000; }
@@ -80,9 +78,6 @@ footer {
           footer .footer-menu ul li a:hover {
             color: #000; }
 
-/*
- * Top bar
- */
 .top-bar {
   background: #2c3e50; }
   .top-bar a {
@@ -92,5 +87,19 @@ footer {
     .top-bar a:hover {
       color: rgba(236, 240, 241, 0.8);
       text-decoration: none; }
+
+.breadcrumb-current {
+  margin: 0px 5px 5px 10px; }
+
+.product-item a {
+  text-decoration: none; }
+
+.product-item .caption {
+  font-size: 1.2em; }
+
+.price {
+  color: #666; }
+  .price .amount::before {
+    content: '$'; }
 
 /*# sourceMappingURL=frontend.css.map */

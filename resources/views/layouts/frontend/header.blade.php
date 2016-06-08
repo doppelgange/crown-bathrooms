@@ -57,7 +57,6 @@
                             </ul>
                         </li>
                         @endforeach
-                        <li><a href="#">New Arrival</a></li>
                         <li><a href="http://www.trademe.co.nz/stores/crown-bathrooms" target="_blank">Outlet</a></li>
                         <li><a href="#">Catalog</a></li>
                     </ul>

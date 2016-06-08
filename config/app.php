@@ -52,7 +52,7 @@ return [
     |
     */
 
-    'timezone' => 'Pacific\Auckland',
+    'timezone' => 'Pacific/Auckland',
 
     /*
     |--------------------------------------------------------------------------
