@@ -20,6 +20,8 @@ header .navbar {
 
 header .navbar-brand {
   padding-top: 5px; }
+  header .navbar-brand img {
+    height: 40px; }
 
 header .navbar-default {
   background: none;

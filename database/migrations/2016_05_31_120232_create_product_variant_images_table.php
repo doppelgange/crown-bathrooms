@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateProductResourceTable extends Migration
+class CreateProductVariantImagesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -12,14 +12,13 @@ class CreateProductResourceTable extends Migration
      */
     public function up()
     {
-        Schema::create('product_resource', function (Blueprint $table) {
-            $table->integer('product_id')->unsigned();
+        Schema::create('product_variant_images', function (Blueprint $table) {
+            $table->integer('product_variant_id')->unsigned();
             $table->integer('resource_id')->unsigned();
-            $table->enum('type', ['image', 'attachment']);
             $table->timestamps();
 
-            $table->foreign('product_id')
-                ->references('id')->on('products')
+            $table->foreign('product_variant_id')
+                ->references('id')->on('product_variants')
                 ->onDelete('cascade')
             ;
 
@@ -37,6 +36,6 @@ class CreateProductResourceTable extends Migration
      */
     public function down()
     {
-        Schema::drop('product_resource');
+        Schema::drop('product_variant_images');
     }
 }

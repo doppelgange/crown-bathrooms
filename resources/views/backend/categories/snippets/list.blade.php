@@ -5,6 +5,7 @@
             <th>ID</th>
             <th>Image</th>
             <th>Category Name</th>
+            <th>Code</th>
             <th>Parent Category Name</th>
             <th>Description</th>
             <th>Created at</th>
@@ -21,6 +22,7 @@
                         {{$category->name}}
                     </a>
                 </td>
+                <td>{{$category->code}}</td>
                 <td>@if($category->parentCategory)
                         <a href="{{route('backend.category.show', ['id' => $category->parentCategory->id])}}">
                             {{$category->parentCategory->name}}

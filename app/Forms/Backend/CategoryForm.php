@@ -12,6 +12,7 @@ class CategoryForm extends Form
         $parentCategories = Category::all()->pluck('name','id')->all();
         $this
             ->add('name', 'text')
+            ->add('code', 'text')
             ->add('parent_category_id', 'select',[
                 'choices'=>$parentCategories,
                 'empty_value' => 'Root Category'

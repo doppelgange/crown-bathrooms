@@ -6,13 +6,17 @@ use Illuminate\Database\Eloquent\Model;
 
 class Product extends Model
 {
-    protected $fillable =  ['name', 'code', 'category_id','material','description','color' ,'width','depth','price','special_price'];
-
+    protected $guarded =  ['id'];
     /*
      * Get parent category
      */
     public function category(){
         return $this->belongsTo('App\Category');
+    }
+
+
+    public function variants(){
+        return $this->hasMany('App\ProductVariant');
     }
 
     public function resources(){

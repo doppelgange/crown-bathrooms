@@ -13,11 +13,25 @@
 
 Route::auth();
 
+
+
+// Frontend pages, no need login
 Route::get('/', 'HomeController@index');
 Route::get('/home', 'HomeController@index');
-Route::resource('/backend/category', 'Backend\CategoryController');
-Route::resource('/backend/product', 'Backend\ProductController');
-
 Route::get('/product', 'Frontend\FrontendProductController@index');
 Route::resource('/category/{category}/product', 'Frontend\FrontendProductController');
+Route::resource('/cart', 'Frontend\CartController');
+
+
+
+
+//Backend pages, need to login
+Route::group(['middleware' => ['web.backend']], function () {
+    Route::get('/backend', 'Backend\DashboardController@index');
+    Route::resource('/backend/category', 'Backend\CategoryController');
+    Route::resource('/backend/product', 'Backend\ProductController');
+});
+
+
+
 

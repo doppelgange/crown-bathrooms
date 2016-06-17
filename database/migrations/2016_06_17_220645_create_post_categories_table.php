@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateProductsTable extends Migration
+class CreatePostCategoriesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -12,15 +12,11 @@ class CreateProductsTable extends Migration
      */
     public function up()
     {
-        Schema::create('products', function (Blueprint $table) {
+        Schema::create('post_categories', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer("category_id")->unsigned()->index();
             $table->string('name');
-            $table->text('description')->nullable();
-            $table->enum('status',['active','inactive'])->default('active');
+            $table->string('slug');
             $table->timestamps();
-            $table->foreign('category_id')
-                ->references('id')->on('categories');
         });
     }
 
@@ -31,6 +27,6 @@ class CreateProductsTable extends Migration
      */
     public function down()
     {
-        Schema::drop('products');
+        Schema::drop('post_categories');
     }
 }

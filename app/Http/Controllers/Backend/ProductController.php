@@ -6,6 +6,7 @@ use App\Base\Controllers\BackendController;
 use App\Http\Requests\ProductRequest;
 use App\Http\Requests;
 use App\Product;
+use App\ProductVariant;
 use Laracasts\Flash\Flash;
 
 class ProductController extends BackendController
@@ -19,7 +20,7 @@ class ProductController extends BackendController
     public function index(Product $product)
     {
         $products = $product->paginate();
-        return view($this->viewPath("index"), compact('products'));
+        return view('backend.products.index', compact('products'));
     }
 
     /**
@@ -30,7 +31,17 @@ class ProductController extends BackendController
      */
     public function store(ProductRequest $request)
     {
-        $model = Product::create($request->all());
+        //Create product
+        $product = Product::create($request->only(['']));
+
+        //Create master product variant
+
+        $productVariant = ProductVariant::create([
+            $request
+        ]);
+
+        ProductVariant::create();
+
         $resource = $this->saveImageFromRequest($request,$model);
         if(!is_null($resource)){
             $model->resources()->attach($resource->id, ['type' => 'image']);
