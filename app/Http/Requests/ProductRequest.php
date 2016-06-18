@@ -23,17 +23,19 @@ class ProductRequest extends Request
      */
     public function rules()
     {
-        return [
-            'name'  => 'required',
-            'code'  => 'required' ,
-            'category_id'  => 'required' ,
-//            'material',
-//            'description',
-//            'color' ,
-            'width' =>'numeric',
-            'depth' =>'numeric',
-            'price' =>'required|numeric',
-            'special_price' =>'numeric'
+        $rules =  [
+            'name'          => 'required|unique:products',
+            'category_id'   => 'required' ,
+            'description'   => '' ,
+            'product_variants.code'             => 'required|unique:product_variants' ,
+            'product_variants.name'             => 'required|unique:product_variants',
+            'product_variants.material'         => '',
+            'product_variants.color'            => '',
+            'product_variants.width'            => 'numeric',
+            'product_variants.depth'            => 'numeric',
+            'product_variants.price'            => 'required|numeric',
+            'product_variants.special_price'    => 'numeric'
         ];
+        return $rules;
     }
 }

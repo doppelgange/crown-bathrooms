@@ -2,14 +2,15 @@
 
 namespace App\Http\Controllers\Backend;
 
-use App\Base\Controllers\BackendController;
+use App\Category;
+use App\Http\Controllers\Controller;
 use App\Http\Requests\ProductRequest;
 use App\Http\Requests;
 use App\Product;
 use App\ProductVariant;
 use Laracasts\Flash\Flash;
 
-class ProductController extends BackendController
+class ProductController extends Controller
 {
     /**
      * Display a listing of the product.
@@ -23,6 +24,16 @@ class ProductController extends BackendController
         return view('backend.products.index', compact('products'));
     }
 
+    public function create(){
+        $categories = Category::whereNotExists(function ($query) {
+            $query->select('*')
+                ->from('categories as parent')
+                ->whereRaw('categories.id = parent.parent_category_id');
+        })
+            ->pluck('name','id')->all();
+        return view('backend.products.create',compact('categories'));
+    }
+
     /**
      * Store a newly created product in storage
      *
@@ -32,24 +43,23 @@ class ProductController extends BackendController
     public function store(ProductRequest $request)
     {
         //Create product
-        $product = Product::create($request->only(['']));
+        $product = Product::create($request->only(['category_id','name','description']));
 
         //Create master product variant
 
-        $productVariant = ProductVariant::create([
-            $request
-        ]);
-
-        ProductVariant::create();
-
-        $resource = $this->saveImageFromRequest($request,$model);
-        if(!is_null($resource)){
-            $model->resources()->attach($resource->id, ['type' => 'image']);
+        $productVariant = ProductVariant::create(array_merge(
+            [
+                'product_id'   =>  $product->id,
+                'is_master'    =>   1
+            ],
+            $request->get('product_variants')
+        ));
+        if($productVariant->id){
+            $productVariant->uploadImages($request);
         }
+        $product->id ? Flash::success('Product and variant are created successfully.') : Flash::error('Failed to create product and variant.');
 
-        $model->id ? Flash::success(trans('backend.create.success')) : Flash::error(trans('backend.create.fail'));
-        return $this->redirectRoutePath('index');
-        return $this->createFlashRedirect(Product::class, $request);
+        return redirect(route('backend.product.show',$product->id));
     }
 
     /**
@@ -60,7 +70,7 @@ class ProductController extends BackendController
      */
     public function show(Product $product)
     {
-        return $this->viewPath("show", $product);
+        return view("backend.products.show",compact('product'));
     }
 
     /**
@@ -71,7 +81,7 @@ class ProductController extends BackendController
      */
     public function edit(Product $product)
     {
-        return $this->getForm($product);
+        return view('backend.products.create',compact('product'));
     }
 
     /**
@@ -83,12 +93,10 @@ class ProductController extends BackendController
      */
     public function update(Product $product, ProductRequest $request)
     {
-        $resource = $this->saveImageFromRequest($request,$product);
-        if(!is_null($resource)){
-            $product->resources()->attach($resource->id, ['type' => 'image']);
-        }
+        //Create product
+        $product = Product::update($request->only(['category_id','name','description']));
 
-        return $this->saveFlashRedirect($product, $request);
+        return redirect(route('backend.product.show',$product->id));
     }
 
     /**
@@ -99,6 +107,9 @@ class ProductController extends BackendController
      */
     public function destroy(Product $product)
     {
-        return $this->destroyFlashRedirect($product);
+        $product->delete() ?
+            Flash::success('backend.delete.success') :
+            Flash::error('backend.delete.fail');
+        return redirect('backend.product.index');
     }
 }

@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Log;
 
 class Category extends Model
 {
-    protected $fillable =  ['name', 'parent_category_id', 'description' ,'image_id'];
+    protected $guarded =  ['id'];
 
     public $rootCategoryName = "Root Category";
 

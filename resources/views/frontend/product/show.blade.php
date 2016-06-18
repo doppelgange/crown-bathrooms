@@ -10,17 +10,17 @@
                             <div id="product-carousel" class="owl-carousel owl-theme owl-loaded">
                                 <div class="owl-stage-outer">
                                     <div>
-                                        @if(count($product->images)>0)
-                                            @foreach($product->images as $image)
-                                            <div class="owl-item cloned" style="width: 355px; margin-right: 0px;">
-                                                <div class="item"><img src="{{$image->url}}" class="img-responsive" alt=""></div>
-                                            </div>
-                                            @endforeach
-                                        @else
+                                        {{--@if(count($product->images)>0)--}}
+                                            {{--@foreach($product->images as $image)--}}
+                                            {{--<div class="owl-item cloned" style="width: 355px; margin-right: 0px;">--}}
+                                                {{--<div class="item"><img src="{{$image->url}}" class="img-responsive" alt=""></div>--}}
+                                            {{--</div>--}}
+                                            {{--@endforeach--}}
+                                        {{--@else--}}
                                             <div>
                                                 <div class="item"><img src="http://placehold.it/500x500.png" class="img-responsive" alt=""></div>
                                             </div>
-                                        @endif
+                                        {{--@endif--}}
                                     </div>
                                 </div>
                                 <div class="owl-controls">

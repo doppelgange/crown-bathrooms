@@ -7,55 +7,68 @@
             <table class="table">
                 <tr>
                     <td><label>ID</label></td>
-                    <td>{{$object->id}}</td>
+                    <td>{{$product->id}}</td>
                 </tr>
                 <tr>
                     <td><label>Name</label></td>
-                    <td>{{$object->name}}</td>
+                    <td>{{$product->name}}</td>
                 </tr>
                 <tr>
                     <td><label>Category</label></td>
                     <td>
-                        {{$object->category_name}}
+                        {{$product->category->name}}
                     </td>
                 </tr>
                 <tr>
-                    <td><label>Color</label></td>
-                    <td>{{$object->color}}</td>
-                </tr>
-                <tr>
-                    <td><label>Width</label></td>
-                    <td>{{$object->color}}</td>
-                </tr>
-                <tr>
-                    <td><label>Depth</label></td>
-                    <td>{{$object->color}}</td>
-                </tr>
-                <tr>
-                    <td><label>Price</label></td>
-                    <td>{{$object->color}}</td>
-                </tr>
-                <tr>
-                    <td><label>Special Price</label></td>
-                    <td>{{$object->color}}</td>
-                </tr>
-                <tr>
-                    <td><label>Description</label></td>
-                    <td>{{$object->description}}</td>
-                </tr>
-                <tr>
                     <td><label>Created at</label></td>
-                    <td>{{$object->created_at}}</td>
+                    <td>{{$product->created_at}}</td>
                 </tr>
                 <tr>
                     <td><label>Updated at</label></td>
-                    <td>{{$object->updated_at}}</td>
+                    <td>{{$product->updated_at}}</td>
                 </tr>
             </table>
+            <h2 class="page-header">Product Variants Detail</h2>
+            @foreach($product->variants as $variant)
+            <table class="table">
+                <tr>
+                    <td><label>ID</label></td>
+                    <td>{{$variant->id}}</td>
+                </tr>
+                <tr>
+                    <td><label>Name</label></td>
+                    <td>{{$variant->name}}</td>
+                </tr>
+                <tr>
+                    <td><label>Color</label></td>
+                    <td>{{$variant->color}}</td>
+                </tr>
+                <tr>
+                    <td><label>Width</label></td>
+                    <td>{{$variant->color}}</td>
+                </tr>
+                <tr>
+                    <td><label>Depth</label></td>
+                    <td>{{$variant->color}}</td>
+                </tr>
+                <tr>
+                    <td><label>Price</label></td>
+                    <td>{{$variant->color}}</td>
+                </tr>
+                <tr>
+                    <td><label>Special Price</label></td>
+                    <td>{{$variant->color}}</td>
+                </tr>
+                <tr>
+                    <td><label>Description</label></td>
+                    <td>{{$variant->description}}</td>
+                </tr>
+            </table>
+            @endforeach
         </div>
     </div>
-    @if(count($object->subCategories))
+    @if(count($product->subCategories))
         <h2 class="sub-header">Sub Categories</h2>
-        @include('backend.categories.snippets.list',['categories'=>$object->subCategories()->paginate()])
+        @include('backend.categories.snippets.list',['categories'=>$product->subCategories()->paginate()])
     @endif
 @endsection

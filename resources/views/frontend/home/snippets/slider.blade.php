@@ -154,7 +154,7 @@
             <img data-u="image" src="img/slider/slider-3.jpg" />
         </div>
         <div data-p="225.00" style="display: none;">
-            <img data-u="image" src="img/slider/slider-4.png" />
+            <img data-u="image" src="img/slider/slider-5.png" />
         </div>
         <a data-u="ad" href="http://www.jssor.com" style="display:none">jQuery Slider</a>
 

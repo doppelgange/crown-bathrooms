@@ -15,7 +15,7 @@ class CreateProductsTable extends Migration
         Schema::create('products', function (Blueprint $table) {
             $table->increments('id');
             $table->integer("category_id")->unsigned()->index();
-            $table->string('name');
+            $table->string('name')->unique();
             $table->text('description')->nullable();
             $table->enum('status',['active','inactive'])->default('active');
             $table->timestamps();

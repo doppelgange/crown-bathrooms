@@ -1,4 +1,4 @@
-@extends('layouts.backend.default')
+@extends('layouts.backend.leftcol')
 @section('content')
     <h1 class="page-header">List Products</h1>
     @include('backend.products.snippets.list',compact('products'))

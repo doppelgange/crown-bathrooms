@@ -30,4 +30,5 @@ class Product extends Model
     public function attachments(){
         return $this->belongsToMany('App\Resource','product_resource')->wherePivot('type', 'attachment');
     }
+
 }

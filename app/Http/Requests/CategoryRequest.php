@@ -26,6 +26,7 @@ class CategoryRequest extends Request
         return [
             'parent_category_id'  => 'exists:categories,id',
             'name'      => 'required',
+            'code'      => 'required',
         ];
     }
 }

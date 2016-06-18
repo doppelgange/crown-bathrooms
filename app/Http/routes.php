@@ -23,7 +23,9 @@ Route::resource('/category/{category}/product', 'Frontend\FrontendProductControl
 Route::resource('/cart', 'Frontend\CartController');
 
 
-
+//Route::get('/backend', 'Backend\DashboardController@index');
+//Route::resource('/backend/category', 'Backend\CategoryController');
+//Route::resource('/backend/product', 'Backend\ProductController');
 
 //Backend pages, need to login
 Route::group(['middleware' => ['web.backend']], function () {
