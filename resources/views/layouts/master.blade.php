@@ -10,6 +10,9 @@
     @yield('head.script')
 </head>
 <body>
+    @if(isset($vueView))
+    <component is="{{$vueView}}">
+    @endif
     @yield('body.before')
     <header>
         @yield('header')
@@ -23,5 +26,11 @@
         @yield('footer')
     </footer>
     @yield('body.after')
+
+    @if(isset($vueView))
+    </component>
+    @endif
+    @yield('footer.script.shared')
+    @yield('footer.script.page')
 </body>
 </html>

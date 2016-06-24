@@ -22,10 +22,6 @@
     <link href="{{ elixir('css/frontend.css') }}" rel="stylesheet">
 @stop
 
-@section('head.script')
-    <script src="{{ elixir("js/main.js") }}"></script>
-@stop
-
 @section('body.before')
     <div class="top-bar">
         <div class="container">
@@ -51,13 +47,13 @@
 @endsection
 
 @section('header')
-
-@include('layouts.frontend.header')
-
+    @include('layouts.frontend.header')
 @stop
 
 @section('footer')
-
-@include('layouts.frontend.footer')
-
+    @include('layouts.frontend.footer')
+@stop
+@section('footer.script.shared')
+    <script src="{{ elixir("js/main.js") }}"></script>
+    <script src="{{ asset("js/app.js") }}"></script>
 @stop

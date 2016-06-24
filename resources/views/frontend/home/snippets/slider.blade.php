@@ -1,3 +1,4 @@
+@section('footer.script.page')
 <script>
     jQuery(document).ready(function ($) {
 
@@ -50,7 +51,7 @@
         //responsive code end
     });
 </script>
-
+@endsection
 <style>
 
     /* jssor slider bullet navigator skin 05 css */

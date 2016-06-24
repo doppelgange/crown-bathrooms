@@ -1,6 +1,8 @@
 process.env.DISABLE_NOTIFIER = true;
 var elixir = require('laravel-elixir');
 
+require('laravel-elixir-vueify');
+
 /*
  |--------------------------------------------------------------------------
  | Elixir Asset Management
@@ -27,10 +29,10 @@ elixir(function(mix) {
         .copy('resources/assets/libs/font-awesome/fonts', 'public/build/fonts');
 
 
-
+    mix.browserify('app.js');
     mix.scripts([
         'jquery-2.2.4.min.js',
-        'jssor.slider.min.js'
+        'jssor.slider.min.js',
     ],'public/js/main.js');
 
     mix.version([
