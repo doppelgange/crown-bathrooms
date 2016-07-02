@@ -86,8 +86,6 @@
         {{--<td>{{Form::textarea('Description','')}}</td>--}}
         {{--</tr>--}}
         {{--</tbody>--}}
-
-        </table>
         <button class="btn btn-primary" type="submit">Save</button>
         <button class="btn btn-warning" type="reset">Reset</button>
         {{ Form::close() }}

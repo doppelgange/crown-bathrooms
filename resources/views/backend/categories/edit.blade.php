@@ -1,15 +1,62 @@
-@extends('layouts.backend.leftcol')
+@extends('layouts.backend.leftcol',['vueView'  => 'BackendCategoryEdit'])
 
 @section('content')
-    <h1 class="page-header">Edit Category</h1>
+    <h1 class="page-header">@if($view =='create') Create @else Edit @endif Category</h1>
     <div class="container">
-        <div class="row">
-            @if(!is_null($object))
-                <div class="col-xs-4"><img src="{{$object->image_url}}" alt="" class="img-rounded"></div>
-            @endif
+        @if($view =='create')
+            {{Form::open(['route'=>'backend.category.store','class'=>'form-horizontal','method'=>'POST','files'=>true])}}
+        @else
+            {{Form::open(['route'=>['backend.category.update',$category->id],'class'=>'form-horizontal','method'=>'PUT','files'=>true])}}
+        @endif
+        <div class="form-group @if($errors->first('parent_category_id')) has-error @endif">
+            <label class="control-label col-xs-2">Parent Category</label>
+            <div class="col-xs-10">
+                {{Form::select('parent_category_id',$parentCategories,isset($category)?$category->parent_category_id:old('parent_category_id'),['class'=>'form-control'])}}
+                @if($errors->first('parent_category_id'))
+                    <span class="help-block">{{$errors->first('parent_category_id')}}</span>
+                @endif
+            </div>
         </div>
-        <div class="row">
-            {!! form($form) !!}
+        <div class="form-group @if($errors->first('name')) has-error @endif">
+            <label class="control-label  col-xs-2">Name</label>
+            <div class="col-xs-10">
+                {{Form::text('name',isset($category)?$category->name:old('name'),['class'=>'form-control'])}}
+                @if($errors->first('name'))
+                    <span class="help-block">{{$errors->first('name')}}</span>
+                @endif
+            </div>
         </div>
+        <div class="form-group @if($errors->first('code')) has-error @endif">
+            <label class="control-label col-xs-2">Code</label>
+            <div class="col-xs-10">
+                {{Form::text('code',isset($category)?$category->code:old('code'),['class'=>'form-control'])}}
+                @if($errors->first('code'))
+                    <span class="help-block">{{$errors->first('code')}}</span>
+                @endif
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-xs-2">Description</label>
+            <div class="col-xs-10">
+                {{--<div class="">--}}
+                    {{--{{isset($category)?$category->description : old('description')}}--}}
+                {{--</div>--}}
+                {{Form::textarea('description',isset($category)?$category->description : old('description'),['class'=>'form-control summernote'])}}
+
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-xs-2">Image</label>
+            <div class="col-xs-10">
+                @if(!empty($category))
+                    <img src="{{$category->image_url}}" alt="" class="img-rounded">
+                @endif
+                {{Form::file('category_image',['accept'=>'image/*'])}}
+            </div>
+        </div>
+        <button class="btn btn-primary" type="submit">Save</button>
+        <button class="btn btn-warning" type="reset">Reset</button>
+        {{ Form::close() }}
+    </div>
     </div>
 @endsection

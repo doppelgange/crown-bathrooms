@@ -11,7 +11,7 @@
 </head>
 <body>
     @if(isset($vueView))
-    <component is="{{$vueView}}">
+    <component is="{{$vueView}}" inline-template>
     @endif
     @yield('body.before')
     <header>

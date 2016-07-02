@@ -22,6 +22,9 @@ Route::get('/product', 'Frontend\FrontendProductController@index');
 Route::resource('/category/{category}/product', 'Frontend\FrontendProductController');
 Route::resource('/cart', 'Frontend\CartController');
 
+Route::get('/test',function(){
+    return view('frontend.test');
+});
 
 //Route::get('/backend', 'Backend\DashboardController@index');
 //Route::resource('/backend/category', 'Backend\CategoryController');

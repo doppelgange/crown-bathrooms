@@ -2,16 +2,15 @@
 
 namespace App\Http\Controllers\Backend;
 
-use App\Base\Controllers\BackendController;
-use App\Forms\Backend\CategoryForm;
 use App\Http\Requests\CategoryRequest;
 use App\Resource;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Requests;
 use App\Category;
+use Illuminate\Support\Facades\Storage;
+use Kris\LaravelFormBuilder\FormBuilder;
 
-class CategoryController extends BackendController
+class CategoryController extends Controller
 {
     /**
      * Display a listing of the category.
@@ -23,9 +22,14 @@ class CategoryController extends BackendController
     public function index(Category $category)
     {
         $categories = $category->paginate();
-        return view($this->viewPath("index"), compact('categories'));
+        return view("backend.categories.index", compact('categories'));
     }
 
+    public function create(){
+        $view = 'create';
+        $parentCategories = Category::all()->pluck('name','id')->all();
+        return view("backend.categories.create", compact('parentCategories','view'));
+    }
     /**
      * Store a newly created category in storage
      *
@@ -35,11 +39,19 @@ class CategoryController extends BackendController
      */
     public function store(CategoryRequest $request,Category $category)
     {
-        $resource = $this->saveImageFromRequest($request,$category);
-        if(!is_null($resource)){
-            $request['image_id'] = $resource->id;
+        $category->fill($this->saveImage($request));
+        $category->save();
+
+        if($category->id){
+            return redirect()
+                ->route('backend.category.edit',$category->id)
+                ->with('Category is created successfully!');
+        }else{
+            return redirect()
+                ->route('backend.category.index')
+                ->with('Failed to create category!');
         }
-        return $this->createFlashRedirect(Category::class, $request);
+
     }
 
     /**
@@ -50,7 +62,7 @@ class CategoryController extends BackendController
      */
     public function show(Category $category)
     {
-        return $this->viewPath("show", $category);
+        return view("backend.categories.show", compact('category'));
     }
 
     /**
@@ -61,7 +73,9 @@ class CategoryController extends BackendController
      */
     public function edit(Category $category)
     {
-        return $this->getForm($category);
+        $view = 'edit';
+        $parentCategories = Category::all()->pluck('name','id')->all();
+        return view("backend.categories.edit", compact('parentCategories','category','view'));
     }
 
     /**
@@ -73,12 +87,17 @@ class CategoryController extends BackendController
      */
     public function update(Category $category, CategoryRequest $request)
     {
-        $resource = $this->saveImageFromRequest($request,$category);
-        if(!is_null($resource)){
-            $request['image_id'] = $resource->id;
-        }
+        $category->fill($this->saveImage($request));
 
-        return $this->saveFlashRedirect($category, $request);
+        if($category->save()){
+            return redirect()
+                ->route('backend.category.edit',$category->id)
+                ->with('Category is updated successfully!');
+        }else{
+            return redirect()
+                ->route('backend.category.edit',$category->id)
+                ->with('Failed to update category!');
+        }
     }
 
     /**
@@ -89,6 +108,35 @@ class CategoryController extends BackendController
      */
     public function destroy(Category $category)
     {
-        return $this->destroyFlashRedirect($category);
+        $category->delete() ?
+            Flash::success('Category is deleted successfully.') :
+            Flash::error('Failed to delete category.');
+        return $this->redirect()
+            ->route('backend.category.edit',$category->id);
+    }
+
+    /**
+     * @param CategoryRequest $request
+     * @return static
+     */
+    public function saveImage(CategoryRequest $request)
+    {
+        $data = $request->except(['category_image']);
+        //Save image first
+        if ($request->hasFile('category_image')) {
+            $file = $request->file('category_image');
+            $path = 'category/' . $file->getClientOriginalName();
+//            if (!Storage::has($path)) {
+                if (Storage::put($path, file_get_contents($file->getRealPath()))) {
+                    $resource = Resource::create([
+                        'name' => $file->getClientOriginalName(),
+                        'path' => $path,
+                        'mime_type' => $file->getMimeType()
+                    ]);
+                    $data['image_id'] = $resource->id;
+                }
+//            }
+        }
+        return $data;
     }
 }

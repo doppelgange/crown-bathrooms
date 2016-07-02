@@ -1,13 +1,6 @@
 <style>
     .dropdown .dropdown-menu{
         display: none;
-        opacity: 0;
-
-        -moz-transition:    all 1000ms ease;
-        -webkit-transition: all 1000ms ease;
-        -o-transition:      all 1000ms ease;
-        -ms-transition:     all 1000ms ease;
-        transition:         all 1000ms ease;
     }
     .dropdown:hover .dropdown-menu {
         display: block;
@@ -35,13 +28,16 @@
                 <div class="collapse navbar-collapse" id="menu">
                     <ul class="nav navbar-nav navbar-right">
                         @foreach($rootCategories as $rootCategory)
-                        <li class="dropdown"><a href="#" data-toggle="dropdown" class="dropdown-toggle">{{$rootCategory->name}}<b class="caret"></b></a>
-                            <ul class="dropdown-menu">
+                        <li class="dropdown">
+                            <a href="#" data-toggle="dropdown" class="dropdown-toggle">
+                                {{$rootCategory->name}}<b class="caret"></b>
+                            </a>
+                            <ul class="dropdown-menu animated fadeIn">
                                 <li>
-                                    <div class="yamm-content">
+                                    <div class="yamm-content container">
                                         <div class="row">
                                             @foreach($rootCategory->subCategories as $subCategory)
-                                            <div class="col-sm-3">
+                                            <div class="col-xs-3">
                                                 <a href="{{route('category.{category}.product.index',[$subCategory->id])}}" target="_blank">
                                                     <div class="thumbnail"><img alt="260x130" src="{{$subCategory->image_url}}">
                                                         <div class="caption">

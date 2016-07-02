@@ -39,3 +39,7 @@
 @section('footer')
     @include('layouts.backend.snippets.footer')
 @endsection
+@section('footer.script.shared')
+    <script src="{{ elixir("js/main.js") }}"></script>
+    <script src="{{ asset("js/app.js") }}"></script>
+@stop

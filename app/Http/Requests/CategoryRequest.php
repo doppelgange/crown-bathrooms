@@ -23,10 +23,19 @@ class CategoryRequest extends Request
      */
     public function rules()
     {
-        return [
-            'parent_category_id'  => 'exists:categories,id',
-            'name'      => 'required',
-            'code'      => 'required',
-        ];
+        if ($this->isMethod('post')) {
+            return [
+                'parent_category_id'  => 'exists:categories,id',
+                'name'      => 'required|unique:categories|max:255',
+                'code'      => 'required|unique:categories|max:255',
+            ];
+        }else{
+            return [
+                'parent_category_id'  => 'exists:categories,id',
+                'name'      => 'required|max:255',
+                'code'      => 'required|max:255',
+            ];
+        }
+
     }
 }
