@@ -34,6 +34,12 @@
         <span class="pull-right">
             <a href="#"><i class="fa fa-map-marker f-1x"></i> 62 Waione St, Petone, Lower Hutt 5012</a>
             <a href="#"><i class="fa fa-phone fa-1x" aria-hidden="true"></i>  04-920 9991</a>
+            <a href="/selector/">
+                <i class="fa fa-star fa-1x" aria-hidden="true"></i>
+                Selector
+                <span class="badge @if(Cart::count()>0) progress-bar-danger @endif" >{{Cart::count()}}</span>
+            </a>
+
             @if(Auth::check())
             <a href="/backend/"> Hello, {{Auth::user()->name}} </a>
             <a href="/logout"><i class="fa fa-sign-in fa-1x" aria-hidden="true"></i> Logout </a>

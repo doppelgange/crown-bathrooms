@@ -1,7 +1,6 @@
 @extends('layouts.backend.leftcol')
 
 @section('content')
-    {{var_dump($errors)}}
     <h1 class="page-header">Create Product</h1>
     <div class="container">
         {{Form::open(['route'=>'backend.product.store','class'=>'form-horizontal'])}}

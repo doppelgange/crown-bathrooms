@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
+use App\ProductVariant;
 use Gloudemans\Shoppingcart\Facades\Cart;
 use Illuminate\Http\Request;
 
@@ -17,7 +18,6 @@ class CartController extends Controller
      */
     public function index()
     {
-        Cart::add('2', 'Product 2', 1, 10.00);
         $cart = Cart::content();
         return view('frontend.cart.index',compact(['cart']));
     }
@@ -40,7 +40,8 @@ class CartController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $productVariant = ProductVariant::find($request->get('product_variant_id'));
+        Cart::add($productVariant, $productVariant->name, 1, $productVariant->price);
     }
 
     /**
@@ -74,7 +75,7 @@ class CartController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+
     }
 
     /**

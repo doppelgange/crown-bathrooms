@@ -13,6 +13,20 @@ use Laracasts\Flash\Flash;
 class ProductController extends Controller
 {
     /**
+     * Create a new controller instance.
+     *
+     */
+    public function __construct()
+    {
+        $this->categories = Category::whereNotExists(function ($query) {
+                $query->select('*')
+                    ->from('categories as parent')
+                    ->whereRaw('categories.id = parent.parent_category_id');
+            })
+            ->pluck('name','id')->all();
+    }
+
+    /**
      * Display a listing of the product.
      *
      * @param Product $product
@@ -25,12 +39,7 @@ class ProductController extends Controller
     }
 
     public function create(){
-        $categories = Category::whereNotExists(function ($query) {
-            $query->select('*')
-                ->from('categories as parent')
-                ->whereRaw('categories.id = parent.parent_category_id');
-        })
-            ->pluck('name','id')->all();
+        $categories = $this->categories;
         return view('backend.products.create',compact('categories'));
     }
 
@@ -81,7 +90,8 @@ class ProductController extends Controller
      */
     public function edit(Product $product)
     {
-        return view('backend.products.create',compact('product'));
+        $categories = $this->categories;
+        return view('backend.products.create',compact('product','categories'));
     }
 
     /**

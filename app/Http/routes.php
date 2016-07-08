@@ -20,7 +20,7 @@ Route::get('/', 'HomeController@index');
 Route::get('/home', 'HomeController@index');
 Route::get('/product', 'Frontend\FrontendProductController@index');
 Route::resource('/category/{category}/product', 'Frontend\FrontendProductController');
-Route::resource('/cart', 'Frontend\CartController');
+Route::resource('/selector', 'Frontend\CartController');
 
 Route::get('/test',function(){
     return view('frontend.test');
