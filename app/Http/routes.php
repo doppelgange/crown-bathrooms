@@ -35,6 +35,7 @@ Route::group(['middleware' => ['web.backend']], function () {
     Route::get('/backend', 'Backend\DashboardController@index');
     Route::resource('/backend/category', 'Backend\CategoryController');
     Route::resource('/backend/product', 'Backend\ProductController');
+    Route::resource('/backend/image', 'Backend\ImageController');
 });
 
 

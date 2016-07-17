@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers\Backend;
 
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Http\Controllers;
 use App\Http\Requests;
+use Illuminate\Support\Facades\Log;
 
-class ProductResourceController extends Controller
+class ImageController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -15,7 +17,7 @@ class ProductResourceController extends Controller
      */
     public function index()
     {
-        //
+        dd(storage_path().'/upload');
     }
 
     /**
@@ -36,7 +38,16 @@ class ProductResourceController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $files = $request->allFiles();
+        $uploadedFiles = [];
+        foreach($files as $file=>$value){
+            $filename =str_random(5).'_'.$value->getClientOriginalName();
+            $uploadedFiles[$filename] = '/storage/upload/'.$filename;
+            Log::info($filename);
+            $result = $request->file($file)->move(storage_path().'/app/upload',$filename);
+            Log::info($result);
+        }
+        return response()->json($uploadedFiles);
     }
 
     /**

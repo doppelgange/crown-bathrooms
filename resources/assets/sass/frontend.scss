@@ -131,7 +131,16 @@ footer {
     }
 }
 
-
+.thumbnail-wrap{
+    padding: 5px;
+}
+header .navbar-default .navbar-nav li .thumbnail a{
+    padding: 5px;
+    display: block;
+}
+.thumbnail{
+    margin-bottom: 0px;
+}
 
 
 

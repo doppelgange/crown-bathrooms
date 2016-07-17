@@ -95,1541 +95,6 @@ process.chdir = function (dir) {
 process.umask = function() { return 0; };
 
 },{}],2:[function(require,module,exports){
-/**
- * Trumbowyg v2.1.0 - A lightweight WYSIWYG editor
- * Trumbowyg core file
- * ------------------------
- * @link http://alex-d.github.io/Trumbowyg
- * @license MIT
- * @author Alexandre Demode (Alex-D)
- *         Twitter : @AlexandreDemode
- *         Website : alex-d.fr
- */
-
-jQuery.trumbowyg = {
-    langs: {
-        en: {
-            viewHTML: 'View HTML',
-
-            undo: 'Undo',
-            redo: 'Redo',
-
-            formatting: 'Formatting',
-            p: 'Paragraph',
-            blockquote: 'Quote',
-            code: 'Code',
-            header: 'Header',
-
-            bold: 'Bold',
-            italic: 'Italic',
-            strikethrough: 'Stroke',
-            underline: 'Underline',
-
-            strong: 'Strong',
-            em: 'Emphasis',
-            del: 'Deleted',
-
-            superscript: 'Superscript',
-            subscript: 'Subscript',
-
-            unorderedList: 'Unordered list',
-            orderedList: 'Ordered list',
-
-            insertImage: 'Insert Image',
-            link: 'Link',
-            createLink: 'Insert link',
-            unlink: 'Remove link',
-
-            justifyLeft: 'Align Left',
-            justifyCenter: 'Align Center',
-            justifyRight: 'Align Right',
-            justifyFull: 'Align Justify',
-
-            horizontalRule: 'Insert horizontal rule',
-            removeformat: 'Remove format',
-
-            fullscreen: 'Fullscreen',
-
-            close: 'Close',
-
-            submit: 'Confirm',
-            reset: 'Cancel',
-
-            required: 'Required',
-            description: 'Description',
-            title: 'Title',
-            text: 'Text',
-            target: 'Target'
-        }
-    },
-
-    // Plugins
-    plugins: {},
-
-    // SVG Path globally
-    svgPath: null
-};
-
-
-(function (navigator, window, document, $) {
-    'use strict';
-
-    $.fn.trumbowyg = function (options, params) {
-        var trumbowygDataName = 'trumbowyg';
-        if (options === Object(options) || !options) {
-            return this.each(function () {
-                if (!$(this).data(trumbowygDataName)) {
-                    $(this).data(trumbowygDataName, new Trumbowyg(this, options));
-                }
-            });
-        }
-        if (this.length === 1) {
-            try {
-                var t = $(this).data(trumbowygDataName);
-                switch (options) {
-                    // Exec command
-                    case 'execCmd':
-                        return t.execCmd(params.cmd, params.param, params.forceCss);
-
-                    // Modal box
-                    case 'openModal':
-                        return t.openModal(params.title, params.content);
-                    case 'closeModal':
-                        return t.closeModal();
-                    case 'openModalInsert':
-                        return t.openModalInsert(params.title, params.fields, params.callback);
-
-                    // Range
-                    case 'saveRange':
-                        return t.saveRange();
-                    case 'getRange':
-                        return t.range;
-                    case 'getRangeText':
-                        return t.getRangeText();
-                    case 'restoreRange':
-                        return t.restoreRange();
-
-                    // Enable/disable
-                    case 'enable':
-                        return t.toggleDisable(false);
-                    case 'disable':
-                        return t.toggleDisable(true);
-
-                    // Destroy
-                    case 'destroy':
-                        return t.destroy();
-
-                    // Empty
-                    case 'empty':
-                        return t.empty();
-
-                    // HTML
-                    case 'html':
-                        return t.html(params);
-                }
-            } catch (c) {
-            }
-        }
-
-        return false;
-    };
-
-    // @param: editorElem is the DOM element
-    var Trumbowyg = function (editorElem, options) {
-        var t = this,
-            trumbowygIconsId = 'trumbowyg-icons';
-
-        // Get the document of the element. It use to makes the plugin
-        // compatible on iframes.
-        t.doc = editorElem.ownerDocument || document;
-
-        // jQuery object of the editor
-        t.$ta = $(editorElem); // $ta : Textarea
-        t.$c = $(editorElem); // $c : creator
-
-        options = options || {};
-
-        // Localization management
-        if (options.lang != null || $.trumbowyg.langs[options.lang] != null) {
-            t.lang = $.extend(true, {}, $.trumbowyg.langs.en, $.trumbowyg.langs[options.lang]);
-        } else {
-            t.lang = $.trumbowyg.langs.en;
-        }
-
-        // SVG path
-        var svgPathOption = $.trumbowyg.svgPath != null ? $.trumbowyg.svgPath : options.svgPath;
-        t.hasSvg = svgPathOption !== false;
-        t.svgPath = !!t.doc.querySelector('base') ? window.location : '';
-        if ($('#' + trumbowygIconsId, t.doc).length === 0 && svgPathOption !== false) {
-            if (svgPathOption == null) {
-                try {
-                    throw new Error();
-                } catch (e) {
-                    var stackLines = e.stack.split('\n');
-
-                    for (var i in stackLines) {
-                        if (!stackLines[i].match(/http[s]?:\/\//)) {
-                            continue;
-                        }
-                        svgPathOption = stackLines[Number(i)].match(/((http[s]?:\/\/.+\/)([^\/]+\.js)):/)[1].split('/');
-                        svgPathOption.pop();
-                        svgPathOption = svgPathOption.join('/') + '/ui/icons.svg';
-                        break;
-                    }
-                }
-            }
-
-            var div = t.doc.createElement('div');
-            div.id = trumbowygIconsId;
-            t.doc.body.insertBefore(div, t.doc.body.childNodes[0]);
-            $.get(svgPathOption, function (data) {
-                div.innerHTML = new XMLSerializer().serializeToString(data.documentElement);
-            });
-        }
-
-
-        /**
-         * When the button is associated to a empty object
-         * fn and title attributs are defined from the button key value
-         *
-         * For example
-         *      foo: {}
-         * is equivalent to :
-         *      foo: {
-             *          fn: 'foo',
-             *          title: this.lang.foo
-             *      }
-         */
-        var h = t.lang.header, // Header translation
-            isBlinkFunction = function () {
-                return (window.chrome || (window.Intl && Intl.v8BreakIterator)) && 'CSS' in window;
-            };
-        t.btnsDef = {
-            viewHTML: {
-                fn: 'toggle'
-            },
-
-            undo: {
-                isSupported: isBlinkFunction,
-                key: 'Z'
-            },
-            redo: {
-                isSupported: isBlinkFunction,
-                key: 'Y'
-            },
-
-            p: {
-                fn: 'formatBlock'
-            },
-            blockquote: {
-                fn: 'formatBlock'
-            },
-            h1: {
-                fn: 'formatBlock',
-                title: h + ' 1'
-            },
-            h2: {
-                fn: 'formatBlock',
-                title: h + ' 2'
-            },
-            h3: {
-                fn: 'formatBlock',
-                title: h + ' 3'
-            },
-            h4: {
-                fn: 'formatBlock',
-                title: h + ' 4'
-            },
-            subscript: {
-                tag: 'sub'
-            },
-            superscript: {
-                tag: 'sup'
-            },
-
-            bold: {
-                key: 'B'
-            },
-            italic: {
-                key: 'I'
-            },
-            underline: {
-                tag: 'u'
-            },
-            strikethrough: {
-                tag: 'strike'
-            },
-
-            strong: {
-                fn: 'bold',
-                key: 'B'
-            },
-            em: {
-                fn: 'italic',
-                key: 'I'
-            },
-            del: {
-                fn: 'strikethrough'
-            },
-
-            createLink: {
-                key: 'K',
-                tag: 'a'
-            },
-            unlink: {},
-
-            insertImage: {},
-
-            justifyLeft: {
-                tag: 'left',
-                forceCss: true
-            },
-            justifyCenter: {
-                tag: 'center',
-                forceCss: true
-            },
-            justifyRight: {
-                tag: 'right',
-                forceCss: true
-            },
-            justifyFull: {
-                tag: 'justify',
-                forceCss: true
-            },
-
-            unorderedList: {
-                fn: 'insertUnorderedList',
-                tag: 'ul'
-            },
-            orderedList: {
-                fn: 'insertOrderedList',
-                tag: 'ol'
-            },
-
-            horizontalRule: {
-                fn: 'insertHorizontalRule'
-            },
-
-            removeformat: {},
-
-            fullscreen: {
-                class: 'trumbowyg-not-disable'
-            },
-            close: {
-                fn: 'destroy',
-                class: 'trumbowyg-not-disable'
-            },
-
-            // Dropdowns
-            formatting: {
-                dropdown: ['p', 'blockquote', 'h1', 'h2', 'h3', 'h4'],
-                ico: 'p'
-            },
-            link: {
-                dropdown: ['createLink', 'unlink']
-            }
-        };
-
-        // Defaults Options
-        t.o = $.extend(true, {}, {
-            lang: 'en',
-
-            fixedBtnPane: false,
-            fixedFullWidth: false,
-            autogrow: false,
-
-            prefix: 'trumbowyg-',
-
-            semantic: true,
-            resetCss: false,
-            removeformatPasted: false,
-            tagsToRemove: [],
-
-            btnsGrps: {
-                design: ['bold', 'italic', 'underline', 'strikethrough'],
-                semantic: ['strong', 'em', 'del'],
-                justify: ['justifyLeft', 'justifyCenter', 'justifyRight', 'justifyFull'],
-                lists: ['unorderedList', 'orderedList']
-            },
-            btns: [
-                ['viewHTML'],
-                ['undo', 'redo'],
-                ['formatting'],
-                'btnGrp-semantic',
-                ['superscript', 'subscript'],
-                ['link'],
-                ['insertImage'],
-                'btnGrp-justify',
-                'btnGrp-lists',
-                ['horizontalRule'],
-                ['removeformat'],
-                ['fullscreen']
-            ],
-            // For custom button definitions
-            btnsDef: {},
-
-            inlineElementsSelector: 'a,abbr,acronym,b,caption,cite,code,col,dfn,dir,dt,dd,em,font,hr,i,kbd,li,q,span,strikeout,strong,sub,sup,u',
-
-            pasteHandlers: [],
-
-            imgDblClickHandler: function () {
-                var $img = $(this),
-                    src = $img.attr('src'),
-                    base64 = '(Base64)';
-
-                if (src.indexOf('data:image') === 0) {
-                    src = base64;
-                }
-
-                t.openModalInsert(t.lang.insertImage, {
-                    url: {
-                        label: 'URL',
-                        value: src,
-                        required: true
-                    },
-                    alt: {
-                        label: t.lang.description,
-                        value: $img.attr('alt')
-                    }
-                }, function (v) {
-                    if (v.src !== base64) {
-                        $img.attr({
-                            src: v.src
-                        });
-                    }
-                    $img.attr({
-                        alt: v.alt
-                    });
-                    return true;
-                });
-                return false;
-            },
-
-            plugins: {}
-        }, options);
-
-        t.disabled = t.o.disabled || (editorElem.nodeName === 'TEXTAREA' && editorElem.disabled);
-
-        if (options.btns) {
-            t.o.btns = options.btns;
-        } else if (!t.o.semantic) {
-            t.o.btns[4] = 'btnGrp-design';
-        }
-
-        $.each(t.o.btnsDef, function (btnName, btnDef) {
-            t.addBtnDef(btnName, btnDef);
-        });
-
-        // Keyboard shortcuts are load in this array
-        t.keys = [];
-
-        // Tag to button dynamically hydrated
-        t.tagToButton = {};
-        t.tagHandlers = [];
-
-        // Admit multiple paste handlers
-        t.pasteHandlers = [].concat(t.o.pasteHandlers);
-
-        t.init();
-    };
-
-    Trumbowyg.prototype = {
-        init: function () {
-            var t = this;
-            t.height = t.$ta.height();
-
-            t.initPlugins();
-
-            // Disable image resize in Firefox
-            t.doc.execCommand('enableObjectResizing', false, false);
-            t.doc.execCommand('defaultParagraphSeparator', false, 'p');
-
-            t.buildEditor();
-            t.buildBtnPane();
-
-            t.fixedBtnPaneEvents();
-
-            t.buildOverlay();
-
-            setTimeout(function () {
-                if (t.disabled) {
-                    t.toggleDisable(true);
-                }
-                t.$c.trigger('tbwinit');
-            });
-        },
-
-        addBtnDef: function (btnName, btnDef) {
-            this.btnsDef[btnName] = btnDef;
-        },
-
-        buildEditor: function () {
-            var t = this,
-                prefix = t.o.prefix,
-                html = '';
-
-            t.$box = $('<div/>', {
-                class: prefix + 'box ' + prefix + 'editor-visible ' + prefix + t.o.lang + ' trumbowyg'
-            });
-
-            // $ta = Textarea
-            // $ed = Editor
-            t.isTextarea = t.$ta.is('textarea');
-            if (t.isTextarea) {
-                html = t.$ta.val();
-                t.$ed = $('<div/>');
-                t.$box
-                    .insertAfter(t.$ta)
-                    .append(t.$ed, t.$ta);
-            } else {
-                t.$ed = t.$ta;
-                html = t.$ed.html();
-
-                t.$ta = $('<textarea/>', {
-                    name: t.$ta.attr('id'),
-                    height: t.height
-                }).val(html);
-
-                t.$box
-                    .insertAfter(t.$ed)
-                    .append(t.$ta, t.$ed);
-                t.syncCode();
-            }
-
-            t.$ta
-                .addClass(prefix + 'textarea')
-                .attr('tabindex', -1)
-            ;
-
-            t.$ed
-                .addClass(prefix + 'editor')
-                .attr({
-                    contenteditable: true,
-                    dir: t.lang._dir || 'ltr'
-                })
-                .html(html)
-            ;
-
-            if (t.o.tabindex) {
-                t.$ed.attr('tabindex', t.o.tabindex);
-            }
-
-            if (t.$c.is('[placeholder]')) {
-                t.$ed.attr('placeholder', t.$c.attr('placeholder'));
-            }
-
-            if (t.o.resetCss) {
-                t.$ed.addClass(prefix + 'reset-css');
-            }
-
-            if (!t.o.autogrow) {
-                t.$ta.add(t.$ed).css({
-                    height: t.height
-                });
-            }
-
-            t.semanticCode();
-
-
-            t._ctrl = false;
-            t.$ed
-                .on('dblclick', 'img', t.o.imgDblClickHandler)
-                .on('keydown', function (e) {
-                    t._composition = (e.which === 229);
-
-                    if (e.ctrlKey) {
-                        t._ctrl = true;
-                        var k = t.keys[String.fromCharCode(e.which).toUpperCase()];
-
-                        try {
-                            t.execCmd(k.fn, k.param);
-                            return false;
-                        } catch (c) {
-                        }
-                    }
-                })
-                .on('keyup', function (e) {
-                    if (e.which >= 37 && e.which <= 40) {
-                        return;
-                    }
-
-                    if (e.ctrlKey && (e.which === 89 || e.which === 90)) {
-                        t.$c.trigger('tbwchange');
-                    } else if (!t._ctrl && e.which !== 17 && !t._composition) {
-                        t.semanticCode(false, e.which === 13);
-                        t.$c.trigger('tbwchange');
-                    }
-
-                    setTimeout(function () {
-                        t._ctrl = false;
-                    }, 200);
-                })
-                .on('mouseup keydown keyup', function () {
-                    t.updateButtonPaneStatus();
-                })
-                .on('focus blur', function (e) {
-                    t.$c.trigger('tbw' + e.type);
-                    if (e.type === 'blur') {
-                        $('.' + prefix + 'active-button', t.$btnPane).removeClass(prefix + 'active-button ' + prefix + 'active');
-                    }
-                })
-                .on('cut', function () {
-                    t.$c.trigger('tbwchange');
-                })
-                .on('paste', function (e) {
-                    if (t.o.removeformatPasted) {
-                        e.preventDefault();
-
-                        try {
-                            // IE
-                            var text = window.clipboardData.getData('Text');
-
-                            try {
-                                // <= IE10
-                                t.doc.selection.createRange().pasteHTML(text);
-                            } catch (c) {
-                                // IE 11
-                                t.doc.getSelection().getRangeAt(0).insertNode(t.doc.createTextNode(text));
-                            }
-                        } catch (d) {
-                            // Not IE
-                            t.execCmd('insertText', (e.originalEvent || e).clipboardData.getData('text/plain'));
-                        }
-                    }
-
-                    // Call pasteHandlers
-                    $.each(t.pasteHandlers, function (i, pasteHandler) {
-                        pasteHandler(e);
-                    });
-
-                    setTimeout(function () {
-                        if (t.o.semantic) {
-                            t.semanticCode(false, true);
-                        } else {
-                            t.syncCode();
-                        }
-                        t.$c.trigger('tbwpaste', e);
-                    }, 0);
-                });
-            t.$ta.on('keyup paste', function () {
-                t.$c.trigger('tbwchange');
-            });
-
-            $(t.doc).on('keydown', function (e) {
-                if (e.which === 27) {
-                    t.closeModal();
-                    return false;
-                }
-            });
-        },
-
-
-        // Build button pane, use o.btns option
-        buildBtnPane: function () {
-            var t = this,
-                prefix = t.o.prefix;
-
-            var $btnPane = t.$btnPane = $('<div/>', {
-                class: prefix + 'button-pane'
-            });
-
-            $.each(t.o.btns, function (i, btnGrps) {
-                // Managment of group of buttons
-                try {
-                    var b = btnGrps.split('btnGrp-');
-                    if (b[1] != null) {
-                        btnGrps = t.o.btnsGrps[b[1]];
-                    }
-                } catch (c) {
-                }
-
-                if (!$.isArray(btnGrps)) {
-                    btnGrps = [btnGrps];
-                }
-
-                var $btnGroup = $('<div/>', {
-                    class: prefix + 'button-group ' + ((btnGrps.indexOf('fullscreen') >= 0) ? prefix + 'right' : '')
-                });
-                $.each(btnGrps, function (i, btn) {
-                    try { // Prevent buildBtn error
-                        var $item;
-
-                        if (t.isSupportedBtn(btn)) { // It's a supported button
-                            $item = t.buildBtn(btn);
-                        }
-
-                        $btnGroup.append($item);
-                    } catch (c) {
-                    }
-                });
-                $btnPane.append($btnGroup);
-            });
-
-            t.$box.prepend($btnPane);
-        },
-
-
-        // Build a button and his action
-        buildBtn: function (btnName) { // btnName is name of the button
-            var t = this,
-                prefix = t.o.prefix,
-                btn = t.btnsDef[btnName],
-                isDropdown = btn.dropdown,
-                textDef = t.lang[btnName] || btnName,
-
-                $btn = $('<button/>', {
-                    type: 'button',
-                    class: prefix + btnName + '-button ' + (btn.class || ''),
-                    html: t.hasSvg ? '<svg><use xlink:href="' + t.svgPath + '#' + prefix + (btn.ico || btnName).replace(/([A-Z]+)/g, '-$1').toLowerCase() + '"/></svg>' : '',
-                    title: (btn.title || btn.text || textDef) + ((btn.key) ? ' (Ctrl + ' + btn.key + ')' : ''),
-                    tabindex: -1,
-                    mousedown: function () {
-                        if (!isDropdown || $('.' + btnName + '-' + prefix + 'dropdown', t.$box).is(':hidden')) {
-                            $('body', t.doc).trigger('mousedown');
-                        }
-
-                        if (t.$btnPane.hasClass(prefix + 'disable') && !$(this).hasClass(prefix + 'active') && !$(this).hasClass(prefix + 'not-disable')) {
-                            return false;
-                        }
-
-                        t.execCmd((isDropdown ? 'dropdown' : false) || btn.fn || btnName, btn.param || btnName, btn.forceCss || false);
-
-                        return false;
-                    }
-                });
-
-            if (isDropdown) {
-                $btn.addClass(prefix + 'open-dropdown');
-                var dropdownPrefix = prefix + 'dropdown',
-                    $dropdown = $('<div/>', { // the dropdown
-                        class: dropdownPrefix + '-' + btnName + ' ' + dropdownPrefix + ' ' + prefix + 'fixed-top',
-                        'data-dropdown': btnName
-                    });
-                $.each(isDropdown, function (i, def) {
-                    if (t.btnsDef[def] && t.isSupportedBtn(def)) {
-                        $dropdown.append(t.buildSubBtn(def));
-                    }
-                });
-                t.$box.append($dropdown.hide());
-            } else if (btn.key) {
-                t.keys[btn.key] = {
-                    fn: btn.fn || btnName,
-                    param: btn.param || btnName
-                };
-            }
-
-            if (!isDropdown) {
-                t.tagToButton[(btn.tag || btnName).toLowerCase()] = btnName;
-            }
-
-            return $btn;
-        },
-        // Build a button for dropdown menu
-        // @param n : name of the subbutton
-        buildSubBtn: function (btnName) {
-            var t = this,
-                prefix = t.o.prefix,
-                btn = t.btnsDef[btnName];
-
-            if (btn.key) {
-                t.keys[btn.key] = {
-                    fn: btn.fn || btnName,
-                    param: btn.param || btnName
-                };
-            }
-
-            t.tagToButton[(btn.tag || btnName).toLowerCase()] = btnName;
-
-            return $('<button/>', {
-                type: 'button',
-                class: prefix + btnName + '-dropdown-button' + (btn.ico ? ' ' + prefix + btn.ico + '-button' : ''),
-                html: t.hasSvg ? '<svg><use xlink:href="' + t.svgPath + '#' + prefix + (btn.ico || btnName).replace(/([A-Z]+)/g, '-$1').toLowerCase() + '"/></svg>' + (btn.text || btn.title || t.lang[btnName] || btnName) : '',
-                title: ((btn.key) ? ' (Ctrl + ' + btn.key + ')' : null),
-                style: btn.style || null,
-                mousedown: function () {
-                    $('body', t.doc).trigger('mousedown');
-
-                    t.execCmd(btn.fn || btnName, btn.param || btnName, btn.forceCss || false);
-
-                    return false;
-                }
-            });
-        },
-        // Check if button is supported
-        isSupportedBtn: function (b) {
-            try {
-                return this.btnsDef[b].isSupported();
-            } catch (c) {
-            }
-            return true;
-        },
-
-        // Build overlay for modal box
-        buildOverlay: function () {
-            var t = this;
-            t.$overlay = $('<div/>', {
-                class: t.o.prefix + 'overlay'
-            }).css({
-                top: t.$btnPane.outerHeight(),
-                height: (t.$ed.outerHeight() + 1) + 'px'
-            }).appendTo(t.$box);
-            return t.$overlay;
-        },
-        showOverlay: function () {
-            var t = this;
-            $(window).trigger('scroll');
-            t.$overlay.fadeIn(200);
-            t.$box.addClass(t.o.prefix + 'box-blur');
-        },
-        hideOverlay: function () {
-            var t = this;
-            t.$overlay.fadeOut(50);
-            t.$box.removeClass(t.o.prefix + 'box-blur');
-        },
-
-        // Management of fixed button pane
-        fixedBtnPaneEvents: function () {
-            var t = this,
-                fixedFullWidth = t.o.fixedFullWidth,
-                $box = t.$box;
-
-            if (!t.o.fixedBtnPane) {
-                return;
-            }
-
-            t.isFixed = false;
-
-            $(window)
-                .on('scroll resize', function () {
-                    if (!$box) {
-                        return;
-                    }
-
-                    t.syncCode();
-
-                    var scrollTop = $(window).scrollTop(),
-                        offset = $box.offset().top + 1,
-                        bp = t.$btnPane,
-                        oh = bp.outerHeight() - 2;
-
-                    if ((scrollTop - offset > 0) && ((scrollTop - offset - t.height) < 0)) {
-                        if (!t.isFixed) {
-                            t.isFixed = true;
-                            bp.css({
-                                position: 'fixed',
-                                top: 0,
-                                left: fixedFullWidth ? '0' : 'auto',
-                                zIndex: 7
-                            });
-                            $([t.$ta, t.$ed]).css({marginTop: bp.height()});
-                        }
-                        bp.css({
-                            width: fixedFullWidth ? '100%' : (($box.width() - 1) + 'px')
-                        });
-
-                        $('.' + t.o.prefix + 'fixed-top', $box).css({
-                            position: fixedFullWidth ? 'fixed' : 'absolute',
-                            top: fixedFullWidth ? oh : oh + (scrollTop - offset) + 'px',
-                            zIndex: 15
-                        });
-                    } else if (t.isFixed) {
-                        t.isFixed = false;
-                        bp.removeAttr('style');
-                        $([t.$ta, t.$ed]).css({marginTop: 0});
-                        $('.' + t.o.prefix + 'fixed-top', $box).css({
-                            position: 'absolute',
-                            top: oh
-                        });
-                    }
-                });
-        },
-
-        // Disable editor
-        toggleDisable: function (disable) {
-            var t = this,
-                prefix = t.o.prefix;
-
-            t.disabled = disable;
-
-            if (disable) {
-                t.$ta.attr('disabled', true);
-            } else {
-                t.$ta.removeAttr('disabled');
-            }
-            t.$box.toggleClass(prefix + 'disabled', disable);
-            t.$ed.attr('contenteditable', !disable);
-        },
-
-        // Destroy the editor
-        destroy: function () {
-            var t = this,
-                prefix = t.o.prefix,
-                height = t.height;
-
-            if (t.isTextarea) {
-                t.$box.after(
-                    t.$ta
-                        .css({height: height})
-                        .val(t.html())
-                        .removeClass(prefix + 'textarea')
-                        .show()
-                );
-            } else {
-                t.$box.after(
-                    t.$ed
-                        .css({height: height})
-                        .removeClass(prefix + 'editor')
-                        .removeAttr('contenteditable')
-                        .html(t.html())
-                        .show()
-                );
-            }
-
-            t.$ed.off('dblclick', 'img');
-
-            t.destroyPlugins();
-
-            t.$box.remove();
-            t.$c.removeData('trumbowyg');
-            $('body').removeClass(prefix + 'body-fullscreen');
-        },
-
-
-        // Empty the editor
-        empty: function () {
-            this.$ta.val('');
-            this.syncCode(true);
-        },
-
-
-        // Function call when click on viewHTML button
-        toggle: function () {
-            var t = this,
-                prefix = t.o.prefix;
-            t.semanticCode(false, true);
-            setTimeout(function () {
-                t.doc.activeElement.blur();
-                t.$box.toggleClass(prefix + 'editor-hidden ' + prefix + 'editor-visible');
-                t.$btnPane.toggleClass(prefix + 'disable');
-                $('.' + prefix + 'viewHTML-button', t.$btnPane).toggleClass(prefix + 'active');
-                if (t.$box.hasClass(prefix + 'editor-visible')) {
-                    t.$ta.attr('tabindex', -1);
-                } else {
-                    t.$ta.removeAttr('tabindex');
-                }
-            }, 0);
-        },
-
-        // Open dropdown when click on a button which open that
-        dropdown: function (name) {
-            var t = this,
-                d = t.doc,
-                prefix = t.o.prefix,
-                $dropdown = $('[data-dropdown=' + name + ']', t.$box),
-                $btn = $('.' + prefix + name + '-button', t.$btnPane),
-                show = $dropdown.is(':hidden');
-
-            $('body', d).trigger('mousedown');
-
-            if (show) {
-                var o = $btn.offset().left;
-                $btn.addClass(prefix + 'active');
-
-                $dropdown.css({
-                    position: 'absolute',
-                    top: $btn.offset().top - t.$btnPane.offset().top + $btn.outerHeight(),
-                    left: (t.o.fixedFullWidth && t.isFixed) ? o + 'px' : (o - t.$btnPane.offset().left) + 'px'
-                }).show();
-
-                $(window).trigger('scroll');
-
-                $('body', d).on('mousedown', function () {
-                    $('.' + prefix + 'dropdown', d).hide();
-                    $('.' + prefix + 'active', d).removeClass(prefix + 'active');
-                    $('body', d).off('mousedown');
-                });
-            }
-        },
-
-
-        // HTML Code management
-        html: function (html) {
-            var t = this;
-            if (html != null) {
-                t.$ta.val(html);
-                t.syncCode(true);
-                return t;
-            }
-            return t.$ta.val();
-        },
-        syncTextarea: function () {
-            var t = this;
-            t.$ta.val(t.$ed.text().trim().length > 0 || t.$ed.find('hr,img,embed,input').length > 0 ? t.$ed.html() : '');
-        },
-        syncCode: function (force) {
-            var t = this;
-            if (!force && t.$ed.is(':visible')) {
-                t.syncTextarea();
-            } else {
-                t.$ed.html(t.$ta.val());
-            }
-
-            if (t.o.autogrow) {
-                t.height = t.$ed.height();
-                if (t.height !== t.$ta.css('height')) {
-                    t.$ta.css({height: t.height});
-                    t.$c.trigger('tbwresize');
-                }
-            }
-        },
-
-        // Analyse and update to semantic code
-        // @param force : force to sync code from textarea
-        // @param full  : wrap text nodes in <p>
-        semanticCode: function (force, full) {
-            var t = this;
-            t.saveRange();
-            t.syncCode(force);
-
-            $(t.o.tagsToRemove.join(','), t.$ed).remove();
-
-            if (t.o.semantic) {
-                t.semanticTag('b', 'strong');
-                t.semanticTag('i', 'em');
-                t.semanticTag('strike', 'del');
-
-                if (full) {
-                    var inlineElementsSelector = t.o.inlineElementsSelector,
-                        blockElementsSelector = ':not(' + inlineElementsSelector + ')';
-
-                    // Wrap text nodes in span for easier processing
-                    t.$ed.contents().filter(function () {
-                        return this.nodeType === 3 && this.nodeValue.trim().length > 0;
-                    }).wrap('<span data-tbw/>');
-
-                    // Wrap groups of inline elements in paragraphs (recursive)
-                    var wrapInlinesInParagraphsFrom = function ($from) {
-                        if ($from.length !== 0) {
-                            var $finalParagraph = $from.nextUntil(blockElementsSelector).andSelf().wrapAll('<p/>').parent(),
-                                $nextElement = $finalParagraph.nextAll(inlineElementsSelector).first();
-                            $finalParagraph.next('br').remove();
-                            wrapInlinesInParagraphsFrom($nextElement);
-                        }
-                    };
-                    wrapInlinesInParagraphsFrom(t.$ed.children(inlineElementsSelector).first());
-
-                    t.semanticTag('div', 'p', true);
-
-                    // Unwrap paragraphs content, containing nothing usefull
-                    t.$ed.find('p').filter(function () {
-                        // Don't remove currently being edited element
-                        if (t.range && this === t.range.startContainer) {
-                            return false;
-                        }
-                        return $(this).text().trim().length === 0 && $(this).children().not('br,span').length === 0;
-                    }).contents().unwrap();
-
-                    // Get rid of temporial span's
-                    $('[data-tbw]', t.$ed).contents().unwrap();
-
-                    // Remove empty <p>
-                    t.$ed.find('p:empty').remove();
-                }
-
-                t.restoreRange();
-
-                t.syncTextarea();
-            }
-        },
-
-        semanticTag: function (oldTag, newTag, copyAttributes) {
-            $(oldTag, this.$ed).each(function () {
-                var $oldTag = $(this);
-                $oldTag.wrap('<' + newTag + '/>');
-                if (copyAttributes) {
-                    $.each($oldTag.prop('attributes'), function () {
-                        $oldTag.parent().attr(this.name, this.value);
-                    });
-                }
-                $oldTag.contents().unwrap();
-            });
-        },
-
-        // Function call when user click on "Insert Link"
-        createLink: function () {
-            var t = this,
-                documentSelection = t.doc.getSelection(),
-                node = documentSelection.focusNode,
-                url,
-                title,
-                target;
-
-            while (['A', 'DIV'].indexOf(node.nodeName) < 0) {
-                node = node.parentNode;
-            }
-
-            if (node && node.nodeName === 'A') {
-                var $a = $(node);
-                url = $a.attr('href');
-                title = $a.attr('title');
-                target = $a.attr('target');
-                var range = t.doc.createRange();
-                range.selectNode(node);
-                documentSelection.addRange(range);
-            }
-
-            t.saveRange();
-
-            t.openModalInsert(t.lang.createLink, {
-                url: {
-                    label: 'URL',
-                    required: true,
-                    value: url
-                },
-                title: {
-                    label: t.lang.title,
-                    value: title
-                },
-                text: {
-                    label: t.lang.text,
-                    value: t.getRangeText()
-                },
-                target: {
-                    label: t.lang.target,
-                    value: target
-                }
-            }, function (v) { // v is value
-                var link = $(['<a href="', v.url, '">', v.text, '</a>'].join(''));
-                if (v.title.length > 0) {
-                    link.attr('title', v.title);
-                }
-                if (v.target.length > 0) {
-                    link.attr('target', v.target);
-                }
-                t.range.deleteContents();
-                t.range.insertNode(link[0]);
-                return true;
-            });
-        },
-        unlink: function () {
-            var t = this,
-                documentSelection = t.doc.getSelection(),
-                node = documentSelection.focusNode;
-
-            if (documentSelection.isCollapsed) {
-                while (['A', 'DIV'].indexOf(node.nodeName) < 0) {
-                    node = node.parentNode;
-                }
-
-                if (node && node.nodeName === 'A') {
-                    var range = t.doc.createRange();
-                    range.selectNode(node);
-                    documentSelection.addRange(range);
-                }
-            }
-            t.execCmd('unlink', undefined, undefined, true);
-        },
-        insertImage: function () {
-            var t = this;
-            t.saveRange();
-            t.openModalInsert(t.lang.insertImage, {
-                url: {
-                    label: 'URL',
-                    required: true
-                },
-                alt: {
-                    label: t.lang.description,
-                    value: t.getRangeText()
-                }
-            }, function (v) { // v are values
-                t.execCmd('insertImage', v.url);
-                $('img[src="' + v.url + '"]:not([alt])', t.$box).attr('alt', v.alt);
-                return true;
-            });
-        },
-        fullscreen: function () {
-            var t = this,
-                prefix = t.o.prefix,
-                fullscreenCssClass = prefix + 'fullscreen',
-                isFullscreen;
-
-            t.$box.toggleClass(fullscreenCssClass);
-            isFullscreen = t.$box.hasClass(fullscreenCssClass);
-            $('body').toggleClass(prefix + 'body-fullscreen', isFullscreen);
-            $(window).trigger('scroll');
-            t.$c.trigger('tbw' + (isFullscreen ? 'open' : 'close') + 'fullscreen');
-        },
-
-
-        /*
-         * Call method of trumbowyg if exist
-         * else try to call anonymous function
-         * and finaly native execCommand
-         */
-        execCmd: function (cmd, param, forceCss, skipTrumbowyg) {
-            var t = this;
-            skipTrumbowyg = !!skipTrumbowyg || '';
-
-            if (cmd !== 'dropdown') {
-                t.$ed.focus();
-            }
-
-            t.doc.execCommand('styleWithCSS', false, forceCss || false);
-
-            try {
-                t[cmd + skipTrumbowyg](param);
-            } catch (c) {
-                try {
-                    cmd(param);
-                } catch (e2) {
-                    if (cmd === 'insertHorizontalRule') {
-                        param = undefined;
-                    } else if (cmd === 'formatBlock' && (navigator.userAgent.indexOf('MSIE') !== -1 || navigator.appVersion.indexOf('Trident/') !== -1)) {
-                        param = '<' + param + '>';
-                    }
-
-                    t.doc.execCommand(cmd, false, param);
-
-                    t.syncCode();
-                    t.semanticCode(false, true);
-                }
-
-                if (cmd !== 'dropdown') {
-                    t.updateButtonPaneStatus();
-                    t.$c.trigger('tbwchange');
-                }
-            }
-        },
-
-
-        // Open a modal box
-        openModal: function (title, content) {
-            var t = this,
-                prefix = t.o.prefix;
-
-            // No open a modal box when exist other modal box
-            if ($('.' + prefix + 'modal-box', t.$box).length > 0) {
-                return false;
-            }
-
-            t.saveRange();
-            t.showOverlay();
-
-            // Disable all btnPane btns
-            t.$btnPane.addClass(prefix + 'disable');
-
-            // Build out of ModalBox, it's the mask for animations
-            var $modal = $('<div/>', {
-                class: prefix + 'modal ' + prefix + 'fixed-top'
-            }).css({
-                top: t.$btnPane.height()
-            }).appendTo(t.$box);
-
-            // Click on overlay close modal by cancelling them
-            t.$overlay.one('click', function () {
-                $modal.trigger('tbwcancel');
-                return false;
-            });
-
-            // Build the form
-            var $form = $('<form/>', {
-                action: '',
-                html: content
-            })
-                .on('submit', function () {
-                    $modal.trigger('tbwconfirm');
-                    return false;
-                })
-                .on('reset', function () {
-                    $modal.trigger('tbwcancel');
-                    return false;
-                });
-
-
-            // Build ModalBox and animate to show them
-            var $box = $('<div/>', {
-                class: prefix + 'modal-box',
-                html: $form
-            })
-                .css({
-                    top: '-' + t.$btnPane.outerHeight() + 'px',
-                    opacity: 0
-                })
-                .appendTo($modal)
-                .animate({
-                    top: 0,
-                    opacity: 1
-                }, 100);
-
-
-            // Append title
-            $('<span/>', {
-                text: title,
-                class: prefix + 'modal-title'
-            }).prependTo($box);
-
-            $modal.height($box.outerHeight() + 10);
-
-
-            // Focus in modal box
-            $('input:first', $box).focus();
-
-
-            // Append Confirm and Cancel buttons
-            t.buildModalBtn('submit', $box);
-            t.buildModalBtn('reset', $box);
-
-
-            $(window).trigger('scroll');
-
-            return $modal;
-        },
-        // @param n is name of modal
-        buildModalBtn: function (n, $modal) {
-            var t = this,
-                prefix = t.o.prefix;
-
-            return $('<button/>', {
-                class: prefix + 'modal-button ' + prefix + 'modal-' + n,
-                type: n,
-                text: t.lang[n] || n
-            }).appendTo($('form', $modal));
-        },
-        // close current modal box
-        closeModal: function () {
-            var t = this,
-                prefix = t.o.prefix;
-
-            t.$btnPane.removeClass(prefix + 'disable');
-            t.$overlay.off();
-
-            // Find the modal box
-            var $mb = $('.' + prefix + 'modal-box', t.$box);
-
-            $mb.animate({
-                top: '-' + $mb.height()
-            }, 100, function () {
-                $mb.parent().remove();
-                t.hideOverlay();
-            });
-
-            t.restoreRange();
-        },
-        // Preformated build and management modal
-        openModalInsert: function (title, fields, cmd) {
-            var t = this,
-                prefix = t.o.prefix,
-                lg = t.lang,
-                html = '',
-                CONFIRM_EVENT = 'tbwconfirm';
-
-            $.each(fields, function (fieldName, field) {
-                var l = field.label,
-                    n = field.name || fieldName;
-
-                html += '<label><input type="' + (field.type || 'text') + '" name="' + n + '" value="' + (field.value || '').replace(/"/g, '&quot;') + '"><span class="' + prefix + 'input-infos"><span>' +
-                    ((!l) ? (lg[fieldName] ? lg[fieldName] : fieldName) : (lg[l] ? lg[l] : l)) +
-                    '</span></span></label>';
-            });
-
-            return t.openModal(title, html)
-                .on(CONFIRM_EVENT, function () {
-                    var $form = $('form', $(this)),
-                        valid = true,
-                        values = {};
-
-                    $.each(fields, function (fieldName, field) {
-                        var $field = $('input[name="' + fieldName + '"]', $form);
-
-                        values[fieldName] = $.trim($field.val());
-
-                        // Validate value
-                        if (field.required && values[fieldName] === '') {
-                            valid = false;
-                            t.addErrorOnModalField($field, t.lang.required);
-                        } else if (field.pattern && !field.pattern.test(values[fieldName])) {
-                            valid = false;
-                            t.addErrorOnModalField($field, field.patternError);
-                        }
-                    });
-
-                    if (valid) {
-                        t.restoreRange();
-
-                        if (cmd(values, fields)) {
-                            t.syncCode();
-                            t.$c.trigger('tbwchange');
-                            t.closeModal();
-                            $(this).off(CONFIRM_EVENT);
-                        }
-                    }
-                })
-                .one('tbwcancel', function () {
-                    $(this).off(CONFIRM_EVENT);
-                    t.closeModal();
-                });
-        },
-        addErrorOnModalField: function ($field, err) {
-            var prefix = this.o.prefix,
-                $label = $field.parent();
-
-            $field
-                .on('change keyup', function () {
-                    $label.removeClass(prefix + 'input-error');
-                });
-
-            $label
-                .addClass(prefix + 'input-error')
-                .find('input+span')
-                .append(
-                    $('<span/>', {
-                        class: prefix + 'msg-error',
-                        text: err
-                    })
-                );
-        },
-
-
-        // Range management
-        saveRange: function () {
-            var t = this,
-                documentSelection = t.doc.getSelection();
-
-            t.range = null;
-
-            if (documentSelection.rangeCount) {
-                var savedRange = t.range = documentSelection.getRangeAt(0),
-                    range = t.doc.createRange(),
-                    rangeStart;
-                range.selectNodeContents(t.$ed[0]);
-                range.setEnd(savedRange.startContainer, savedRange.startOffset);
-                rangeStart = (range + '').length;
-                t.metaRange = {
-                    start: rangeStart,
-                    end: rangeStart + (savedRange + '').length
-                };
-            }
-        },
-        restoreRange: function () {
-            var t = this,
-                metaRange = t.metaRange,
-                savedRange = t.range,
-                documentSelection = t.doc.getSelection(),
-                range;
-
-            if (!savedRange) {
-                return;
-            }
-
-            if (metaRange && metaRange.start !== metaRange.end) { // Algorithm from http://jsfiddle.net/WeWy7/3/
-                var charIndex = 0,
-                    nodeStack = [t.$ed[0]],
-                    node,
-                    foundStart = false,
-                    stop = false;
-
-                range = t.doc.createRange();
-
-                while (!stop && (node = nodeStack.pop())) {
-                    if (node.nodeType === 3) {
-                        var nextCharIndex = charIndex + node.length;
-                        if (!foundStart && metaRange.start >= charIndex && metaRange.start <= nextCharIndex) {
-                            range.setStart(node, metaRange.start - charIndex);
-                            foundStart = true;
-                        }
-                        if (foundStart && metaRange.end >= charIndex && metaRange.end <= nextCharIndex) {
-                            range.setEnd(node, metaRange.end - charIndex);
-                            stop = true;
-                        }
-                        charIndex = nextCharIndex;
-                    } else {
-                        var cn = node.childNodes,
-                            i = cn.length;
-
-                        while (i > 0) {
-                            i -= 1;
-                            nodeStack.push(cn[i]);
-                        }
-                    }
-                }
-            }
-
-            documentSelection.removeAllRanges();
-            documentSelection.addRange(range || savedRange);
-        },
-        getRangeText: function () {
-            return this.range + '';
-        },
-
-        updateButtonPaneStatus: function () {
-            var t = this,
-                prefix = t.o.prefix,
-                tags = t.getTagsRecursive(t.doc.getSelection().focusNode.parentNode),
-                activeClasses = prefix + 'active-button ' + prefix + 'active';
-
-            $('.' + prefix + 'active-button', t.$btnPane).removeClass(activeClasses);
-            $.each(tags, function (i, tag) {
-                var btnName = t.tagToButton[tag.toLowerCase()],
-                    $btn = $('.' + prefix + btnName + '-button', t.$btnPane);
-
-                if ($btn.length > 0) {
-                    $btn.addClass(activeClasses);
-                } else {
-                    try {
-                        $btn = $('.' + prefix + 'dropdown .' + prefix + btnName + '-dropdown-button', t.$box);
-                        var dropdownBtnName = $btn.parent().data('dropdown');
-                        $('.' + prefix + dropdownBtnName + '-button', t.$box).addClass(activeClasses);
-                    } catch (e) {
-                    }
-                }
-            });
-        },
-        getTagsRecursive: function (element, tags) {
-            var t = this;
-            tags = tags || [];
-
-            var tag = element.tagName;
-            if (tag === 'DIV') {
-                return tags;
-            }
-            if (tag === 'P' && element.style.textAlign !== '') {
-                tags.push(element.style.textAlign);
-            }
-
-            $.each(t.tagHandlers, function (i, tagHandler) {
-                tags = tags.concat(tagHandler(element, t));
-            });
-
-            tags.push(tag);
-
-            return t.getTagsRecursive(element.parentNode, tags);
-        },
-
-        // Plugins
-        initPlugins: function () {
-            var t = this;
-            t.loadedPlugins = [];
-            $.each($.trumbowyg.plugins, function (name, plugin) {
-                if (!plugin.shouldInit || plugin.shouldInit(t)) {
-                    plugin.init(t);
-                    if (plugin.tagHandler) {
-                        t.tagHandlers.push(plugin.tagHandler);
-                    }
-                    t.loadedPlugins.push(plugin);
-                }
-            });
-        },
-        destroyPlugins: function () {
-            $.each(this.loadedPlugins, function (i, plugin) {
-                if (plugin.destroy) {
-                    plugin.destroy();
-                }
-            });
-        }
-    };
-})(navigator, window, document, jQuery);
-
-},{}],3:[function(require,module,exports){
 var Vue // late bind
 var map = Object.create(null)
 var shimmed = false
@@ -1930,6 +395,1319 @@ function format (id) {
   return match ? match[0] : id
 }
 
+},{}],3:[function(require,module,exports){
+/*!
+ * vue-resource v0.9.3
+ * https://github.com/vuejs/vue-resource
+ * Released under the MIT License.
+ */
+
+'use strict';
+
+/**
+ * Promises/A+ polyfill v1.1.4 (https://github.com/bramstein/promis)
+ */
+
+var RESOLVED = 0;
+var REJECTED = 1;
+var PENDING = 2;
+
+function Promise$2(executor) {
+
+    this.state = PENDING;
+    this.value = undefined;
+    this.deferred = [];
+
+    var promise = this;
+
+    try {
+        executor(function (x) {
+            promise.resolve(x);
+        }, function (r) {
+            promise.reject(r);
+        });
+    } catch (e) {
+        promise.reject(e);
+    }
+}
+
+Promise$2.reject = function (r) {
+    return new Promise$2(function (resolve, reject) {
+        reject(r);
+    });
+};
+
+Promise$2.resolve = function (x) {
+    return new Promise$2(function (resolve, reject) {
+        resolve(x);
+    });
+};
+
+Promise$2.all = function all(iterable) {
+    return new Promise$2(function (resolve, reject) {
+        var count = 0,
+            result = [];
+
+        if (iterable.length === 0) {
+            resolve(result);
+        }
+
+        function resolver(i) {
+            return function (x) {
+                result[i] = x;
+                count += 1;
+
+                if (count === iterable.length) {
+                    resolve(result);
+                }
+            };
+        }
+
+        for (var i = 0; i < iterable.length; i += 1) {
+            Promise$2.resolve(iterable[i]).then(resolver(i), reject);
+        }
+    });
+};
+
+Promise$2.race = function race(iterable) {
+    return new Promise$2(function (resolve, reject) {
+        for (var i = 0; i < iterable.length; i += 1) {
+            Promise$2.resolve(iterable[i]).then(resolve, reject);
+        }
+    });
+};
+
+var p$1 = Promise$2.prototype;
+
+p$1.resolve = function resolve(x) {
+    var promise = this;
+
+    if (promise.state === PENDING) {
+        if (x === promise) {
+            throw new TypeError('Promise settled with itself.');
+        }
+
+        var called = false;
+
+        try {
+            var then = x && x['then'];
+
+            if (x !== null && typeof x === 'object' && typeof then === 'function') {
+                then.call(x, function (x) {
+                    if (!called) {
+                        promise.resolve(x);
+                    }
+                    called = true;
+                }, function (r) {
+                    if (!called) {
+                        promise.reject(r);
+                    }
+                    called = true;
+                });
+                return;
+            }
+        } catch (e) {
+            if (!called) {
+                promise.reject(e);
+            }
+            return;
+        }
+
+        promise.state = RESOLVED;
+        promise.value = x;
+        promise.notify();
+    }
+};
+
+p$1.reject = function reject(reason) {
+    var promise = this;
+
+    if (promise.state === PENDING) {
+        if (reason === promise) {
+            throw new TypeError('Promise settled with itself.');
+        }
+
+        promise.state = REJECTED;
+        promise.value = reason;
+        promise.notify();
+    }
+};
+
+p$1.notify = function notify() {
+    var promise = this;
+
+    nextTick(function () {
+        if (promise.state !== PENDING) {
+            while (promise.deferred.length) {
+                var deferred = promise.deferred.shift(),
+                    onResolved = deferred[0],
+                    onRejected = deferred[1],
+                    resolve = deferred[2],
+                    reject = deferred[3];
+
+                try {
+                    if (promise.state === RESOLVED) {
+                        if (typeof onResolved === 'function') {
+                            resolve(onResolved.call(undefined, promise.value));
+                        } else {
+                            resolve(promise.value);
+                        }
+                    } else if (promise.state === REJECTED) {
+                        if (typeof onRejected === 'function') {
+                            resolve(onRejected.call(undefined, promise.value));
+                        } else {
+                            reject(promise.value);
+                        }
+                    }
+                } catch (e) {
+                    reject(e);
+                }
+            }
+        }
+    });
+};
+
+p$1.then = function then(onResolved, onRejected) {
+    var promise = this;
+
+    return new Promise$2(function (resolve, reject) {
+        promise.deferred.push([onResolved, onRejected, resolve, reject]);
+        promise.notify();
+    });
+};
+
+p$1.catch = function (onRejected) {
+    return this.then(undefined, onRejected);
+};
+
+var PromiseObj = window.Promise || Promise$2;
+
+function Promise$1(executor, context) {
+
+    if (executor instanceof PromiseObj) {
+        this.promise = executor;
+    } else {
+        this.promise = new PromiseObj(executor.bind(context));
+    }
+
+    this.context = context;
+}
+
+Promise$1.all = function (iterable, context) {
+    return new Promise$1(PromiseObj.all(iterable), context);
+};
+
+Promise$1.resolve = function (value, context) {
+    return new Promise$1(PromiseObj.resolve(value), context);
+};
+
+Promise$1.reject = function (reason, context) {
+    return new Promise$1(PromiseObj.reject(reason), context);
+};
+
+Promise$1.race = function (iterable, context) {
+    return new Promise$1(PromiseObj.race(iterable), context);
+};
+
+var p = Promise$1.prototype;
+
+p.bind = function (context) {
+    this.context = context;
+    return this;
+};
+
+p.then = function (fulfilled, rejected) {
+
+    if (fulfilled && fulfilled.bind && this.context) {
+        fulfilled = fulfilled.bind(this.context);
+    }
+
+    if (rejected && rejected.bind && this.context) {
+        rejected = rejected.bind(this.context);
+    }
+
+    return new Promise$1(this.promise.then(fulfilled, rejected), this.context);
+};
+
+p.catch = function (rejected) {
+
+    if (rejected && rejected.bind && this.context) {
+        rejected = rejected.bind(this.context);
+    }
+
+    return new Promise$1(this.promise.catch(rejected), this.context);
+};
+
+p.finally = function (callback) {
+
+    return this.then(function (value) {
+        callback.call(this);
+        return value;
+    }, function (reason) {
+        callback.call(this);
+        return PromiseObj.reject(reason);
+    });
+};
+
+var debug = false;
+var util = {};
+var array = [];
+function Util (Vue) {
+    util = Vue.util;
+    debug = Vue.config.debug || !Vue.config.silent;
+}
+
+function warn(msg) {
+    if (typeof console !== 'undefined' && debug) {
+        console.warn('[VueResource warn]: ' + msg);
+    }
+}
+
+function error(msg) {
+    if (typeof console !== 'undefined') {
+        console.error(msg);
+    }
+}
+
+function nextTick(cb, ctx) {
+    return util.nextTick(cb, ctx);
+}
+
+function trim(str) {
+    return str.replace(/^\s*|\s*$/g, '');
+}
+
+var isArray = Array.isArray;
+
+function isString(val) {
+    return typeof val === 'string';
+}
+
+function isBoolean(val) {
+    return val === true || val === false;
+}
+
+function isFunction(val) {
+    return typeof val === 'function';
+}
+
+function isObject(obj) {
+    return obj !== null && typeof obj === 'object';
+}
+
+function isPlainObject(obj) {
+    return isObject(obj) && Object.getPrototypeOf(obj) == Object.prototype;
+}
+
+function isFormData(obj) {
+    return typeof FormData !== 'undefined' && obj instanceof FormData;
+}
+
+function when(value, fulfilled, rejected) {
+
+    var promise = Promise$1.resolve(value);
+
+    if (arguments.length < 2) {
+        return promise;
+    }
+
+    return promise.then(fulfilled, rejected);
+}
+
+function options(fn, obj, opts) {
+
+    opts = opts || {};
+
+    if (isFunction(opts)) {
+        opts = opts.call(obj);
+    }
+
+    return merge(fn.bind({ $vm: obj, $options: opts }), fn, { $options: opts });
+}
+
+function each(obj, iterator) {
+
+    var i, key;
+
+    if (typeof obj.length == 'number') {
+        for (i = 0; i < obj.length; i++) {
+            iterator.call(obj[i], obj[i], i);
+        }
+    } else if (isObject(obj)) {
+        for (key in obj) {
+            if (obj.hasOwnProperty(key)) {
+                iterator.call(obj[key], obj[key], key);
+            }
+        }
+    }
+
+    return obj;
+}
+
+var assign = Object.assign || _assign;
+
+function merge(target) {
+
+    var args = array.slice.call(arguments, 1);
+
+    args.forEach(function (source) {
+        _merge(target, source, true);
+    });
+
+    return target;
+}
+
+function defaults(target) {
+
+    var args = array.slice.call(arguments, 1);
+
+    args.forEach(function (source) {
+
+        for (var key in source) {
+            if (target[key] === undefined) {
+                target[key] = source[key];
+            }
+        }
+    });
+
+    return target;
+}
+
+function _assign(target) {
+
+    var args = array.slice.call(arguments, 1);
+
+    args.forEach(function (source) {
+        _merge(target, source);
+    });
+
+    return target;
+}
+
+function _merge(target, source, deep) {
+    for (var key in source) {
+        if (deep && (isPlainObject(source[key]) || isArray(source[key]))) {
+            if (isPlainObject(source[key]) && !isPlainObject(target[key])) {
+                target[key] = {};
+            }
+            if (isArray(source[key]) && !isArray(target[key])) {
+                target[key] = [];
+            }
+            _merge(target[key], source[key], deep);
+        } else if (source[key] !== undefined) {
+            target[key] = source[key];
+        }
+    }
+}
+
+function root (options, next) {
+
+    var url = next(options);
+
+    if (isString(options.root) && !url.match(/^(https?:)?\//)) {
+        url = options.root + '/' + url;
+    }
+
+    return url;
+}
+
+function query (options, next) {
+
+    var urlParams = Object.keys(Url.options.params),
+        query = {},
+        url = next(options);
+
+    each(options.params, function (value, key) {
+        if (urlParams.indexOf(key) === -1) {
+            query[key] = value;
+        }
+    });
+
+    query = Url.params(query);
+
+    if (query) {
+        url += (url.indexOf('?') == -1 ? '?' : '&') + query;
+    }
+
+    return url;
+}
+
+/**
+ * URL Template v2.0.6 (https://github.com/bramstein/url-template)
+ */
+
+function expand(url, params, variables) {
+
+    var tmpl = parse(url),
+        expanded = tmpl.expand(params);
+
+    if (variables) {
+        variables.push.apply(variables, tmpl.vars);
+    }
+
+    return expanded;
+}
+
+function parse(template) {
+
+    var operators = ['+', '#', '.', '/', ';', '?', '&'],
+        variables = [];
+
+    return {
+        vars: variables,
+        expand: function (context) {
+            return template.replace(/\{([^\{\}]+)\}|([^\{\}]+)/g, function (_, expression, literal) {
+                if (expression) {
+
+                    var operator = null,
+                        values = [];
+
+                    if (operators.indexOf(expression.charAt(0)) !== -1) {
+                        operator = expression.charAt(0);
+                        expression = expression.substr(1);
+                    }
+
+                    expression.split(/,/g).forEach(function (variable) {
+                        var tmp = /([^:\*]*)(?::(\d+)|(\*))?/.exec(variable);
+                        values.push.apply(values, getValues(context, operator, tmp[1], tmp[2] || tmp[3]));
+                        variables.push(tmp[1]);
+                    });
+
+                    if (operator && operator !== '+') {
+
+                        var separator = ',';
+
+                        if (operator === '?') {
+                            separator = '&';
+                        } else if (operator !== '#') {
+                            separator = operator;
+                        }
+
+                        return (values.length !== 0 ? operator : '') + values.join(separator);
+                    } else {
+                        return values.join(',');
+                    }
+                } else {
+                    return encodeReserved(literal);
+                }
+            });
+        }
+    };
+}
+
+function getValues(context, operator, key, modifier) {
+
+    var value = context[key],
+        result = [];
+
+    if (isDefined(value) && value !== '') {
+        if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
+            value = value.toString();
+
+            if (modifier && modifier !== '*') {
+                value = value.substring(0, parseInt(modifier, 10));
+            }
+
+            result.push(encodeValue(operator, value, isKeyOperator(operator) ? key : null));
+        } else {
+            if (modifier === '*') {
+                if (Array.isArray(value)) {
+                    value.filter(isDefined).forEach(function (value) {
+                        result.push(encodeValue(operator, value, isKeyOperator(operator) ? key : null));
+                    });
+                } else {
+                    Object.keys(value).forEach(function (k) {
+                        if (isDefined(value[k])) {
+                            result.push(encodeValue(operator, value[k], k));
+                        }
+                    });
+                }
+            } else {
+                var tmp = [];
+
+                if (Array.isArray(value)) {
+                    value.filter(isDefined).forEach(function (value) {
+                        tmp.push(encodeValue(operator, value));
+                    });
+                } else {
+                    Object.keys(value).forEach(function (k) {
+                        if (isDefined(value[k])) {
+                            tmp.push(encodeURIComponent(k));
+                            tmp.push(encodeValue(operator, value[k].toString()));
+                        }
+                    });
+                }
+
+                if (isKeyOperator(operator)) {
+                    result.push(encodeURIComponent(key) + '=' + tmp.join(','));
+                } else if (tmp.length !== 0) {
+                    result.push(tmp.join(','));
+                }
+            }
+        }
+    } else {
+        if (operator === ';') {
+            result.push(encodeURIComponent(key));
+        } else if (value === '' && (operator === '&' || operator === '?')) {
+            result.push(encodeURIComponent(key) + '=');
+        } else if (value === '') {
+            result.push('');
+        }
+    }
+
+    return result;
+}
+
+function isDefined(value) {
+    return value !== undefined && value !== null;
+}
+
+function isKeyOperator(operator) {
+    return operator === ';' || operator === '&' || operator === '?';
+}
+
+function encodeValue(operator, value, key) {
+
+    value = operator === '+' || operator === '#' ? encodeReserved(value) : encodeURIComponent(value);
+
+    if (key) {
+        return encodeURIComponent(key) + '=' + value;
+    } else {
+        return value;
+    }
+}
+
+function encodeReserved(str) {
+    return str.split(/(%[0-9A-Fa-f]{2})/g).map(function (part) {
+        if (!/%[0-9A-Fa-f]/.test(part)) {
+            part = encodeURI(part);
+        }
+        return part;
+    }).join('');
+}
+
+function template (options) {
+
+    var variables = [],
+        url = expand(options.url, options.params, variables);
+
+    variables.forEach(function (key) {
+        delete options.params[key];
+    });
+
+    return url;
+}
+
+/**
+ * Service for URL templating.
+ */
+
+var ie = document.documentMode;
+var el = document.createElement('a');
+
+function Url(url, params) {
+
+    var self = this || {},
+        options = url,
+        transform;
+
+    if (isString(url)) {
+        options = { url: url, params: params };
+    }
+
+    options = merge({}, Url.options, self.$options, options);
+
+    Url.transforms.forEach(function (handler) {
+        transform = factory(handler, transform, self.$vm);
+    });
+
+    return transform(options);
+}
+
+/**
+ * Url options.
+ */
+
+Url.options = {
+    url: '',
+    root: null,
+    params: {}
+};
+
+/**
+ * Url transforms.
+ */
+
+Url.transforms = [template, query, root];
+
+/**
+ * Encodes a Url parameter string.
+ *
+ * @param {Object} obj
+ */
+
+Url.params = function (obj) {
+
+    var params = [],
+        escape = encodeURIComponent;
+
+    params.add = function (key, value) {
+
+        if (isFunction(value)) {
+            value = value();
+        }
+
+        if (value === null) {
+            value = '';
+        }
+
+        this.push(escape(key) + '=' + escape(value));
+    };
+
+    serialize(params, obj);
+
+    return params.join('&').replace(/%20/g, '+');
+};
+
+/**
+ * Parse a URL and return its components.
+ *
+ * @param {String} url
+ */
+
+Url.parse = function (url) {
+
+    if (ie) {
+        el.href = url;
+        url = el.href;
+    }
+
+    el.href = url;
+
+    return {
+        href: el.href,
+        protocol: el.protocol ? el.protocol.replace(/:$/, '') : '',
+        port: el.port,
+        host: el.host,
+        hostname: el.hostname,
+        pathname: el.pathname.charAt(0) === '/' ? el.pathname : '/' + el.pathname,
+        search: el.search ? el.search.replace(/^\?/, '') : '',
+        hash: el.hash ? el.hash.replace(/^#/, '') : ''
+    };
+};
+
+function factory(handler, next, vm) {
+    return function (options) {
+        return handler.call(vm, options, next);
+    };
+}
+
+function serialize(params, obj, scope) {
+
+    var array = isArray(obj),
+        plain = isPlainObject(obj),
+        hash;
+
+    each(obj, function (value, key) {
+
+        hash = isObject(value) || isArray(value);
+
+        if (scope) {
+            key = scope + '[' + (plain || hash ? key : '') + ']';
+        }
+
+        if (!scope && array) {
+            params.add(value.name, value.value);
+        } else if (hash) {
+            serialize(params, value, key);
+        } else {
+            params.add(key, value);
+        }
+    });
+}
+
+function xdrClient (request) {
+    return new Promise$1(function (resolve) {
+
+        var xdr = new XDomainRequest(),
+            handler = function (event) {
+
+            var response = request.respondWith(xdr.responseText, {
+                status: xdr.status,
+                statusText: xdr.statusText
+            });
+
+            resolve(response);
+        };
+
+        request.abort = function () {
+            return xdr.abort();
+        };
+
+        xdr.open(request.method, request.getUrl(), true);
+        xdr.timeout = 0;
+        xdr.onload = handler;
+        xdr.onerror = handler;
+        xdr.ontimeout = function () {};
+        xdr.onprogress = function () {};
+        xdr.send(request.getBody());
+    });
+}
+
+var ORIGIN_URL = Url.parse(location.href);
+var SUPPORTS_CORS = 'withCredentials' in new XMLHttpRequest();
+
+function cors (request, next) {
+
+    if (!isBoolean(request.crossOrigin) && crossOrigin(request)) {
+        request.crossOrigin = true;
+    }
+
+    if (request.crossOrigin) {
+
+        if (!SUPPORTS_CORS) {
+            request.client = xdrClient;
+        }
+
+        delete request.emulateHTTP;
+    }
+
+    next();
+}
+
+function crossOrigin(request) {
+
+    var requestUrl = Url.parse(Url(request));
+
+    return requestUrl.protocol !== ORIGIN_URL.protocol || requestUrl.host !== ORIGIN_URL.host;
+}
+
+function body (request, next) {
+
+    if (request.emulateJSON && isPlainObject(request.body)) {
+        request.body = Url.params(request.body);
+        request.headers['Content-Type'] = 'application/x-www-form-urlencoded';
+    }
+
+    if (isFormData(request.body)) {
+        delete request.headers['Content-Type'];
+    }
+
+    if (isPlainObject(request.body)) {
+        request.body = JSON.stringify(request.body);
+    }
+
+    next(function (response) {
+
+        var contentType = response.headers['Content-Type'];
+
+        if (isString(contentType) && contentType.indexOf('application/json') === 0) {
+
+            try {
+                response.data = response.json();
+            } catch (e) {
+                response.data = null;
+            }
+        } else {
+            response.data = response.text();
+        }
+    });
+}
+
+function jsonpClient (request) {
+    return new Promise$1(function (resolve) {
+
+        var name = request.jsonp || 'callback',
+            callback = '_jsonp' + Math.random().toString(36).substr(2),
+            body = null,
+            handler,
+            script;
+
+        handler = function (event) {
+
+            var status = 0;
+
+            if (event.type === 'load' && body !== null) {
+                status = 200;
+            } else if (event.type === 'error') {
+                status = 404;
+            }
+
+            resolve(request.respondWith(body, { status: status }));
+
+            delete window[callback];
+            document.body.removeChild(script);
+        };
+
+        request.params[name] = callback;
+
+        window[callback] = function (result) {
+            body = JSON.stringify(result);
+        };
+
+        script = document.createElement('script');
+        script.src = request.getUrl();
+        script.type = 'text/javascript';
+        script.async = true;
+        script.onload = handler;
+        script.onerror = handler;
+
+        document.body.appendChild(script);
+    });
+}
+
+function jsonp (request, next) {
+
+    if (request.method == 'JSONP') {
+        request.client = jsonpClient;
+    }
+
+    next(function (response) {
+
+        if (request.method == 'JSONP') {
+            response.data = response.json();
+        }
+    });
+}
+
+function before (request, next) {
+
+    if (isFunction(request.before)) {
+        request.before.call(this, request);
+    }
+
+    next();
+}
+
+/**
+ * HTTP method override Interceptor.
+ */
+
+function method (request, next) {
+
+    if (request.emulateHTTP && /^(PUT|PATCH|DELETE)$/i.test(request.method)) {
+        request.headers['X-HTTP-Method-Override'] = request.method;
+        request.method = 'POST';
+    }
+
+    next();
+}
+
+function header (request, next) {
+
+    request.method = request.method.toUpperCase();
+    request.headers = assign({}, Http.headers.common, !request.crossOrigin ? Http.headers.custom : {}, Http.headers[request.method.toLowerCase()], request.headers);
+
+    next();
+}
+
+/**
+ * Timeout Interceptor.
+ */
+
+function timeout (request, next) {
+
+    var timeout;
+
+    if (request.timeout) {
+        timeout = setTimeout(function () {
+            request.abort();
+        }, request.timeout);
+    }
+
+    next(function (response) {
+
+        clearTimeout(timeout);
+    });
+}
+
+function xhrClient (request) {
+    return new Promise$1(function (resolve) {
+
+        var xhr = new XMLHttpRequest(),
+            handler = function (event) {
+
+            var response = request.respondWith('response' in xhr ? xhr.response : xhr.responseText, {
+                status: xhr.status === 1223 ? 204 : xhr.status, // IE9 status bug
+                statusText: xhr.status === 1223 ? 'No Content' : trim(xhr.statusText),
+                headers: parseHeaders(xhr.getAllResponseHeaders())
+            });
+
+            resolve(response);
+        };
+
+        request.abort = function () {
+            return xhr.abort();
+        };
+
+        xhr.open(request.method, request.getUrl(), true);
+        xhr.timeout = 0;
+        xhr.onload = handler;
+        xhr.onerror = handler;
+
+        if (request.progress) {
+            if (request.method === 'GET') {
+                xhr.addEventListener('progress', request.progress);
+            } else if (/^(POST|PUT)$/i.test(request.method)) {
+                xhr.upload.addEventListener('progress', request.progress);
+            }
+        }
+
+        if (request.credentials === true) {
+            xhr.withCredentials = true;
+        }
+
+        each(request.headers || {}, function (value, header) {
+            xhr.setRequestHeader(header, value);
+        });
+
+        xhr.send(request.getBody());
+    });
+}
+
+function parseHeaders(str) {
+
+    var headers = {},
+        value,
+        name,
+        i;
+
+    each(trim(str).split('\n'), function (row) {
+
+        i = row.indexOf(':');
+        name = trim(row.slice(0, i));
+        value = trim(row.slice(i + 1));
+
+        if (headers[name]) {
+
+            if (isArray(headers[name])) {
+                headers[name].push(value);
+            } else {
+                headers[name] = [headers[name], value];
+            }
+        } else {
+
+            headers[name] = value;
+        }
+    });
+
+    return headers;
+}
+
+function Client (context) {
+
+    var reqHandlers = [sendRequest],
+        resHandlers = [],
+        handler;
+
+    if (!isObject(context)) {
+        context = null;
+    }
+
+    function Client(request) {
+        return new Promise$1(function (resolve) {
+
+            function exec() {
+
+                handler = reqHandlers.pop();
+
+                if (isFunction(handler)) {
+                    handler.call(context, request, next);
+                } else {
+                    warn('Invalid interceptor of type ' + typeof handler + ', must be a function');
+                    next();
+                }
+            }
+
+            function next(response) {
+
+                if (isFunction(response)) {
+
+                    resHandlers.unshift(response);
+                } else if (isObject(response)) {
+
+                    resHandlers.forEach(function (handler) {
+                        response = when(response, function (response) {
+                            return handler.call(context, response) || response;
+                        });
+                    });
+
+                    when(response, resolve);
+
+                    return;
+                }
+
+                exec();
+            }
+
+            exec();
+        }, context);
+    }
+
+    Client.use = function (handler) {
+        reqHandlers.push(handler);
+    };
+
+    return Client;
+}
+
+function sendRequest(request, resolve) {
+
+    var client = request.client || xhrClient;
+
+    resolve(client(request));
+}
+
+var classCallCheck = function (instance, Constructor) {
+  if (!(instance instanceof Constructor)) {
+    throw new TypeError("Cannot call a class as a function");
+  }
+};
+
+/**
+ * HTTP Response.
+ */
+
+var Response = function () {
+    function Response(body, _ref) {
+        var url = _ref.url;
+        var headers = _ref.headers;
+        var status = _ref.status;
+        var statusText = _ref.statusText;
+        classCallCheck(this, Response);
+
+
+        this.url = url;
+        this.body = body;
+        this.headers = headers || {};
+        this.status = status || 0;
+        this.statusText = statusText || '';
+        this.ok = status >= 200 && status < 300;
+    }
+
+    Response.prototype.text = function text() {
+        return this.body;
+    };
+
+    Response.prototype.blob = function blob() {
+        return new Blob([this.body]);
+    };
+
+    Response.prototype.json = function json() {
+        return JSON.parse(this.body);
+    };
+
+    return Response;
+}();
+
+var Request = function () {
+    function Request(options) {
+        classCallCheck(this, Request);
+
+
+        this.method = 'GET';
+        this.body = null;
+        this.params = {};
+        this.headers = {};
+
+        assign(this, options);
+    }
+
+    Request.prototype.getUrl = function getUrl() {
+        return Url(this);
+    };
+
+    Request.prototype.getBody = function getBody() {
+        return this.body;
+    };
+
+    Request.prototype.respondWith = function respondWith(body, options) {
+        return new Response(body, assign(options || {}, { url: this.getUrl() }));
+    };
+
+    return Request;
+}();
+
+/**
+ * Service for sending network requests.
+ */
+
+var CUSTOM_HEADERS = { 'X-Requested-With': 'XMLHttpRequest' };
+var COMMON_HEADERS = { 'Accept': 'application/json, text/plain, */*' };
+var JSON_CONTENT_TYPE = { 'Content-Type': 'application/json;charset=utf-8' };
+
+function Http(options) {
+
+    var self = this || {},
+        client = Client(self.$vm);
+
+    defaults(options || {}, self.$options, Http.options);
+
+    Http.interceptors.forEach(function (handler) {
+        client.use(handler);
+    });
+
+    return client(new Request(options)).then(function (response) {
+
+        return response.ok ? response : Promise$1.reject(response);
+    }, function (response) {
+
+        if (response instanceof Error) {
+            error(response);
+        }
+
+        return Promise$1.reject(response);
+    });
+}
+
+Http.options = {};
+
+Http.headers = {
+    put: JSON_CONTENT_TYPE,
+    post: JSON_CONTENT_TYPE,
+    patch: JSON_CONTENT_TYPE,
+    delete: JSON_CONTENT_TYPE,
+    custom: CUSTOM_HEADERS,
+    common: COMMON_HEADERS
+};
+
+Http.interceptors = [before, timeout, method, body, jsonp, header, cors];
+
+['get', 'delete', 'head', 'jsonp'].forEach(function (method) {
+
+    Http[method] = function (url, options) {
+        return this(assign(options || {}, { url: url, method: method }));
+    };
+});
+
+['post', 'put', 'patch'].forEach(function (method) {
+
+    Http[method] = function (url, body, options) {
+        return this(assign(options || {}, { url: url, method: method, body: body }));
+    };
+});
+
+function Resource(url, params, actions, options) {
+
+    var self = this || {},
+        resource = {};
+
+    actions = assign({}, Resource.actions, actions);
+
+    each(actions, function (action, name) {
+
+        action = merge({ url: url, params: params || {} }, options, action);
+
+        resource[name] = function () {
+            return (self.$http || Http)(opts(action, arguments));
+        };
+    });
+
+    return resource;
+}
+
+function opts(action, args) {
+
+    var options = assign({}, action),
+        params = {},
+        body;
+
+    switch (args.length) {
+
+        case 2:
+
+            params = args[0];
+            body = args[1];
+
+            break;
+
+        case 1:
+
+            if (/^(POST|PUT|PATCH)$/i.test(options.method)) {
+                body = args[0];
+            } else {
+                params = args[0];
+            }
+
+            break;
+
+        case 0:
+
+            break;
+
+        default:
+
+            throw 'Expected up to 4 arguments [params, body], got ' + args.length + ' arguments';
+    }
+
+    options.body = body;
+    options.params = assign({}, options.params, params);
+
+    return options;
+}
+
+Resource.actions = {
+
+    get: { method: 'GET' },
+    save: { method: 'POST' },
+    query: { method: 'GET' },
+    update: { method: 'PUT' },
+    remove: { method: 'DELETE' },
+    delete: { method: 'DELETE' }
+
+};
+
+function plugin(Vue) {
+
+    if (plugin.installed) {
+        return;
+    }
+
+    Util(Vue);
+
+    Vue.url = Url;
+    Vue.http = Http;
+    Vue.resource = Resource;
+    Vue.Promise = Promise$1;
+
+    Object.defineProperties(Vue.prototype, {
+
+        $url: {
+            get: function () {
+                return options(Vue.url, this, this.$options.url);
+            }
+        },
+
+        $http: {
+            get: function () {
+                return options(Vue.http, this, this.$options.http);
+            }
+        },
+
+        $resource: {
+            get: function () {
+                return Vue.resource.bind(this);
+            }
+        },
+
+        $promise: {
+            get: function () {
+                var _this = this;
+
+                return function (executor) {
+                    return new Vue.Promise(executor, _this);
+                };
+            }
+        }
+
+    });
+}
+
+if (typeof window !== 'undefined' && window.Vue) {
+    window.Vue.use(plugin);
+}
+
+module.exports = plugin;
 },{}],4:[function(require,module,exports){
 (function (process,global){
 /*!
@@ -12002,6 +11780,26 @@ setTimeout(function () {
 module.exports = Vue;
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{"_process":1}],5:[function(require,module,exports){
+var inserted = exports.cache = {}
+
+exports.insert = function (css) {
+  if (inserted[css]) return
+  inserted[css] = true
+
+  var elem = document.createElement('style')
+  elem.setAttribute('type', 'text/css')
+
+  if ('textContent' in elem) {
+    elem.textContent = css
+  } else {
+    elem.styleSheet.cssText = css
+  }
+
+  document.getElementsByTagName('head')[0].appendChild(elem)
+  return elem
+}
+
+},{}],6:[function(require,module,exports){
 'use strict';
 
 var _vue = require('vue');
@@ -12018,6 +11816,8 @@ var _BackendCategoryEdit2 = _interopRequireDefault(_BackendCategoryEdit);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+_vue2.default.use(require('vue-resource'));
+
 new _vue2.default({
     el: 'body',
     components: {
@@ -12026,19 +11826,47 @@ new _vue2.default({
     }
 });
 
-},{"./components/BackendCategoryEdit.vue":6,"./components/FrontendHomeIndex.vue":7,"vue":4}],6:[function(require,module,exports){
+},{"./components/BackendCategoryEdit.vue":7,"./components/FrontendHomeIndex.vue":8,"vue":4,"vue-resource":3}],7:[function(require,module,exports){
+var __vueify_insert__ = require("vueify/lib/insert-css")
+var __vueify_style__ = __vueify_insert__.insert("\n .form-horizontal .modal-body .form-group{\n     margin-left: 0px;\n     margin-right: 0px;\n}\n")
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-require('trumbowyg');
+var SummernoteEditor = require('./snippets/SummernoteEditor.vue');
 exports.default = {
+    data: function data() {
+        return {
+            description: ''
+        };
+    },
+    components: {
+        'summernote-editor': SummernoteEditor
+    },
     ready: function ready() {
-        console.log('xxxx');
-        console.log($('.summernote'));
-        $('.summernote').trumbowyg();
+        $('.summernote').summernote({
+            minHeight: 300, // set minimum height of editor
+            callbacks: {
+                onImageUpload: function (files) {
+                    var data = new FormData();
+                    for (var i = 0; i < files.length; i++) {
+                        data.append("file_" + i, files[i]);
+                    }
+                    this.$http.post('/backend/image', data).then(function (response) {
+                        for (var filename in response.data) {
+                            var img = document.createElement;
+                            var img = document.createElement("img");
+                            img.setAttribute("src", response.data[filename]);
+                            $('.summernote').summernote('insertNode', img);
+                        }
+                    }, function (response) {
+                        console.log('There is an error');
+                    });
+                }.bind(this)
+            }
+        });
     }
 };
 if (module.exports.__esModule) module.exports = module.exports.default
@@ -12046,13 +11874,17 @@ if (module.hot) {(function () {  module.hot.accept()
   var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), true)
   if (!hotAPI.compatible) return
+  module.hot.dispose(function () {
+    __vueify_insert__.cache["\n .form-horizontal .modal-body .form-group{\n     margin-left: 0px;\n     margin-right: 0px;\n}\n"] = false
+    document.head.removeChild(__vueify_style__)
+  })
   if (!module.hot.data) {
     hotAPI.createRecord("_v-759ea18c", module.exports)
   } else {
     hotAPI.update("_v-759ea18c", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
   }
 })()}
-},{"trumbowyg":2,"vue":4,"vue-hot-reload-api":3}],7:[function(require,module,exports){
+},{"./snippets/SummernoteEditor.vue":9,"vue":4,"vue-hot-reload-api":2,"vueify/lib/insert-css":5}],8:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -12070,6 +11902,78 @@ if (module.hot) {(function () {  module.hot.accept()
     hotAPI.update("_v-a1ec851e", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
   }
 })()}
-},{"vue":4,"vue-hot-reload-api":3}]},{},[5]);
+},{"vue":4,"vue-hot-reload-api":2}],9:[function(require,module,exports){
+var __vueify_insert__ = require("vueify/lib/insert-css")
+var __vueify_style__ = __vueify_insert__.insert("\n/*.form-horizontal .modal-body .form-group{*/\n    /*margin-left: 0px;*/\n    /*margin-right: 0px;*/\n/*}*/\n")
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = {
+    template: '<textarea :name="name" cols="30" rows="10"> </textarea>',
+    props: {
+        name: {
+            type: String,
+            required: false,
+            default: ""
+        },
+        text: {
+            required: false,
+            default: ""
+        },
+        class: {
+            type: String,
+            required: false,
+            default: "form-control summernote"
+        }
+    },
+    ready: function ready() {
+        this.control = $(this.$el);
+        this.control.summernote({
+            lang: this.language,
+            height: this.height,
+            minHeight: 300,
+            maxHeight: 600,
+            callbacks: {
+                onInit: function () {
+                    this.control.summernote("code", this.text);
+                }.bind(this),
+                onImageUpload: function (files) {
+                    var data = new FormData();
+                    for (var i = 0; i < files.length; i++) {
+                        data.append("file_" + i, files[i]);
+                    }
+                    this.$http.post('/backend/image', data).then(function (response) {
+                        for (var filename in response.data) {
+                            var img = document.createElement("img");
+                            img.setAttribute("src", response.data[filename]);
+                            this.control.summernote('insertNode', img);
+                        }
+                    }.bind(this), function (response) {
+                        console.log('There is an error');
+                    });
+                }.bind(this)
+            }
+        });
+    }
+};
+if (module.exports.__esModule) module.exports = module.exports.default
+;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<textarea name=\"{{name}}\" cols=\"30\" rows=\"10\"> </textarea>\n"
+if (module.hot) {(function () {  module.hot.accept()
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), true)
+  if (!hotAPI.compatible) return
+  module.hot.dispose(function () {
+    __vueify_insert__.cache["\n/*.form-horizontal .modal-body .form-group{*/\n    /*margin-left: 0px;*/\n    /*margin-right: 0px;*/\n/*}*/\n"] = false
+    document.head.removeChild(__vueify_style__)
+  })
+  if (!module.hot.data) {
+    hotAPI.createRecord("_v-58043457", module.exports)
+  } else {
+    hotAPI.update("_v-58043457", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
+  }
+})()}
+},{"vue":4,"vue-hot-reload-api":2,"vueify/lib/insert-css":5}]},{},[6]);
 
 //# sourceMappingURL=app.js.map

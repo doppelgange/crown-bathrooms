@@ -40,11 +40,15 @@
                     </div>
                     <div class="col-xs-6">
                         <div class="product-body">
-                            <h3>{{$product->name}}</h3>
+                            {{--<h3>{{$product->name}}</h3>--}}
                             <span class="price">
-                                <span class="amount">{{$product->price}}</span>
+                                <span class="amount">{{$product->price or ' Pirice is not available'}}</span>
                             </span>
                             <ul class="list-unstyled product-info">
+                                <li class="form-inline">
+                                    <label class="form-label">Product variant:</label>
+                                    {{Form::select('variant_id',$variants,isset($variant_id)?$variant_id:old('variant_id'),['class'=>'form-control'])}}
+                                </li>
                                 <li><label>Code:</label> {{$product->code}}</li>
                                 <li><label>Category:</label> {{$product->category->name}}</li>
                                 <li><label>Material:</label> {{$product->material}}</li>
@@ -67,8 +71,17 @@
                     </li>
                 </ul>
                 <div class="tab-content">
-                    <div role="tabpanel" class="tab-pane" id="description">
-                    {{$product->description}}
+                    <div role="tabpanel" class="tab-pane active" id="description">
+                        <h1>General Description</h1>
+                        {!! $product->description !!}
+                        <h2>Product Variant description</h2>
+                        @foreach($product->variants as $variant)
+                            @if(!empty($variant->description))
+                                <h1>{!! $variant->name !!}</h1>
+                                {!! $variant->description !!}
+                            @endif
+                        @endforeach
+
                     </div>
                 </div>
             </div>

@@ -39,7 +39,8 @@ class FrontendProductController extends Controller
      */
     public function show(Category $category,Product $product)
     {
-        return view('frontend.product.show')->with(compact('product','category'));
+        $variants = $product->variants()->pluck('name','id')->all();
+        return view('frontend.product.show')->with(compact('product','category','variants'));
     }
 
 }

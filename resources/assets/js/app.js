@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import FrontendHomeIndex from './components/FrontendHomeIndex.vue'
 import BackendCategoryEdit from './components/BackendCategoryEdit.vue'
+Vue.use(require('vue-resource'));
 
 new Vue({
     el: 'body',

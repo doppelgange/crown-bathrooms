@@ -15,10 +15,11 @@ require('laravel-elixir-vueify');
  */
 
 elixir(function(mix) {
+
     mix.copy('node_modules/bootstrap-sass/assets/fonts', 'public/build/fonts')
         .copy('node_modules/font-awesome/fonts', 'public/build/fonts')
-        .copy('node_modules/trumbowyg/dist/trumbowyg.min.js', 'public/js')
-        .copy('node_modules/trumbowyg/dist/ui/icons.svg', 'public/js/ui');
+        .copy('node_modules/summernote/dist/font', 'public/build/css/font')
+        ;
 
     mix.sass('app.scss');
     mix.sass('frontend.scss');
@@ -28,14 +29,17 @@ elixir(function(mix) {
         'node_modules/animate.css/animate.min.css',
         'node_modules/font-awesome/css/font-awesome.min.css',
         'node_modules/animate.css/animate.css',
-        'node_modules/trumbowyg/dist/ui/trumbowyg.min.css',
+        'node_modules/summernote/dist/summernote.css',
         'public/css/app.css',
     ], 'public/css/app.css', './');
 
     mix.browserify('app.js');
+
     mix.scripts([
         'resources/assets/js/jquery-2.2.4.min.js',
         'resources/assets/js/jssor.slider.min.js',
+        'node_modules/bootstrap/dist/js/bootstrap.min.js',
+        'node_modules/summernote/dist/summernote.min.js'
     ],'public/js/main.js','./');
 
     mix.version([

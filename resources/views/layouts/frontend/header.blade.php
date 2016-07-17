@@ -35,20 +35,19 @@
                             <ul class="dropdown-menu animated fadeIn">
                                 <li>
                                     <div class="yamm-content container">
-                                        <div class="row">
                                             @foreach($rootCategory->subCategories as $subCategory)
-                                            <div class="col-xs-3">
-                                                <a href="{{route('category.{category}.product.index',[$subCategory->id])}}" target="_blank">
-                                                    <div class="thumbnail"><img alt="260x130" src="{{$subCategory->image_url}}">
-                                                        <div class="caption">
-                                                            <span>{{$subCategory->name}}</span>
-                                                        </div>
+                                                <div class="col-xs-3 thumbnail-wrap">
+                                                    <div class="thumbnail">
+                                                        <a href="{{route('category.{category}.product.index',[$subCategory->id])}}" target="_blank">
+                                                            <img alt="260x130" src="{{$subCategory->image_url}}">
+                                                            <div class="caption">
+                                                                <span>{{$subCategory->name}}</span>
+                                                            </div>
+                                                        </a>
                                                     </div>
-                                                </a>
-                                            </div>
+                                                </div>
                                             @endforeach
                                         </div>
-                                    </div>
                                 </li>
                             </ul>
                         </li>

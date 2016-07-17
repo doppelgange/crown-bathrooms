@@ -7,7 +7,7 @@
             <th>Category Name</th>
             <th>Code</th>
             <th>Parent Category Name</th>
-            <th>Description</th>
+            {{--<th>Description</th>--}}
             <th>Created at</th>
             <th>Action</th>
         </tr>
@@ -31,7 +31,7 @@
                         {{$category->rootCategoryName}}
                     @endif
                 </td>
-                <td>{{$category->description}}</td>
+{{--                <td>{{$category->description}}</td>--}}
                 <td>{{$category->updated_at}}</td>
                 <td>
                     <a href="{{route('backend.category.edit', ['id' => $category->id])}}" class="btn btn-primary btn-xs">

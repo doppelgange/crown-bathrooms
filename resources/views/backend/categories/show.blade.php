@@ -22,7 +22,7 @@
                 </tr>
                 <tr>
                     <td><label>Description</label></td>
-                    <td>{{$category->description}}</td>
+                    <td>{!! $category->description !!}</td>
                 </tr>
                 <tr>
                     <td><label>Created at</label></td>

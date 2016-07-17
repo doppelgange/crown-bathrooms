@@ -61,7 +61,7 @@
                 </tr>
                 <tr>
                     <td><label>Description</label></td>
-                    <td>{{$variant->description}}</td>
+                    <td>{!!  $variant->description  !!}</td>
                 </tr>
             </table>
             @endforeach

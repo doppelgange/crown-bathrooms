@@ -38,11 +38,7 @@
         <div class="form-group">
             <label class="control-label col-xs-2">Description</label>
             <div class="col-xs-10">
-                {{--<div class="">--}}
-                    {{--{{isset($category)?$category->description : old('description')}}--}}
-                {{--</div>--}}
-                {{Form::textarea('description',isset($category)?$category->description : old('description'),['class'=>'form-control summernote'])}}
-
+                <summernote-editor name="description" text="{{isset($category)?$category->description : old('description')}}"></summernote-editor>
             </div>
         </div>
         <div class="form-group">
@@ -60,3 +56,8 @@
     </div>
     </div>
 @endsection
+
+@section('footer.script.shared')
+    <script src="{{ elixir("js/main.js") }}"></script>
+    <script src="{{ asset("js/app.js") }}"></script>
+@stop
