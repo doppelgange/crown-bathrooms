@@ -55,8 +55,8 @@
 </script>
 
 <style>
-    /*.form-horizontal .modal-body .form-group{*/
-        /*margin-left: 0px;*/
-        /*margin-right: 0px;*/
-    /*}*/
+    .form-horizontal .modal-body .form-group{
+        margin-left: 0px;
+        margin-right: 0px;
+    }
 </style>

@@ -11814,6 +11814,10 @@ var _BackendCategoryEdit = require('./components/BackendCategoryEdit.vue');
 
 var _BackendCategoryEdit2 = _interopRequireDefault(_BackendCategoryEdit);
 
+var _BackendProductEdit = require('./components/BackendProductEdit.vue');
+
+var _BackendProductEdit2 = _interopRequireDefault(_BackendProductEdit);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 _vue2.default.use(require('vue-resource'));
@@ -11822,51 +11826,20 @@ new _vue2.default({
     el: 'body',
     components: {
         FrontendHomeIndex: _FrontendHomeIndex2.default,
-        BackendCategoryEdit: _BackendCategoryEdit2.default
+        BackendCategoryEdit: _BackendCategoryEdit2.default,
+        BackendProductEdit: _BackendProductEdit2.default
     }
 });
 
-},{"./components/BackendCategoryEdit.vue":7,"./components/FrontendHomeIndex.vue":8,"vue":4,"vue-resource":3}],7:[function(require,module,exports){
-var __vueify_insert__ = require("vueify/lib/insert-css")
-var __vueify_style__ = __vueify_insert__.insert("\n .form-horizontal .modal-body .form-group{\n     margin-left: 0px;\n     margin-right: 0px;\n}\n")
+},{"./components/BackendCategoryEdit.vue":7,"./components/BackendProductEdit.vue":8,"./components/FrontendHomeIndex.vue":9,"vue":4,"vue-resource":3}],7:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-
-var SummernoteEditor = require('./snippets/SummernoteEditor.vue');
 exports.default = {
-    data: function data() {
-        return {
-            description: ''
-        };
-    },
     components: {
-        'summernote-editor': SummernoteEditor
-    },
-    ready: function ready() {
-        $('.summernote').summernote({
-            minHeight: 300, // set minimum height of editor
-            callbacks: {
-                onImageUpload: function (files) {
-                    var data = new FormData();
-                    for (var i = 0; i < files.length; i++) {
-                        data.append("file_" + i, files[i]);
-                    }
-                    this.$http.post('/backend/image', data).then(function (response) {
-                        for (var filename in response.data) {
-                            var img = document.createElement;
-                            var img = document.createElement("img");
-                            img.setAttribute("src", response.data[filename]);
-                            $('.summernote').summernote('insertNode', img);
-                        }
-                    }, function (response) {
-                        console.log('There is an error');
-                    });
-                }.bind(this)
-            }
-        });
+        'summernote-editor': require('./snippets/SummernoteEditor.vue')
     }
 };
 if (module.exports.__esModule) module.exports = module.exports.default
@@ -11874,17 +11847,35 @@ if (module.hot) {(function () {  module.hot.accept()
   var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), true)
   if (!hotAPI.compatible) return
-  module.hot.dispose(function () {
-    __vueify_insert__.cache["\n .form-horizontal .modal-body .form-group{\n     margin-left: 0px;\n     margin-right: 0px;\n}\n"] = false
-    document.head.removeChild(__vueify_style__)
-  })
   if (!module.hot.data) {
     hotAPI.createRecord("_v-759ea18c", module.exports)
   } else {
     hotAPI.update("_v-759ea18c", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
   }
 })()}
-},{"./snippets/SummernoteEditor.vue":9,"vue":4,"vue-hot-reload-api":2,"vueify/lib/insert-css":5}],8:[function(require,module,exports){
+},{"./snippets/SummernoteEditor.vue":10,"vue":4,"vue-hot-reload-api":2}],8:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = {
+    components: {
+        'summernote-editor': require('./snippets/SummernoteEditor.vue')
+    }
+};
+if (module.exports.__esModule) module.exports = module.exports.default
+if (module.hot) {(function () {  module.hot.accept()
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), true)
+  if (!hotAPI.compatible) return
+  if (!module.hot.data) {
+    hotAPI.createRecord("_v-0935fd36", module.exports)
+  } else {
+    hotAPI.update("_v-0935fd36", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
+  }
+})()}
+},{"./snippets/SummernoteEditor.vue":10,"vue":4,"vue-hot-reload-api":2}],9:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -11902,9 +11893,9 @@ if (module.hot) {(function () {  module.hot.accept()
     hotAPI.update("_v-a1ec851e", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
   }
 })()}
-},{"vue":4,"vue-hot-reload-api":2}],9:[function(require,module,exports){
+},{"vue":4,"vue-hot-reload-api":2}],10:[function(require,module,exports){
 var __vueify_insert__ = require("vueify/lib/insert-css")
-var __vueify_style__ = __vueify_insert__.insert("\n/*.form-horizontal .modal-body .form-group{*/\n    /*margin-left: 0px;*/\n    /*margin-right: 0px;*/\n/*}*/\n")
+var __vueify_style__ = __vueify_insert__.insert("\n.form-horizontal .modal-body .form-group{\n    margin-left: 0px;\n    margin-right: 0px;\n}\n")
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -11965,7 +11956,7 @@ if (module.hot) {(function () {  module.hot.accept()
   hotAPI.install(require("vue"), true)
   if (!hotAPI.compatible) return
   module.hot.dispose(function () {
-    __vueify_insert__.cache["\n/*.form-horizontal .modal-body .form-group{*/\n    /*margin-left: 0px;*/\n    /*margin-right: 0px;*/\n/*}*/\n"] = false
+    __vueify_insert__.cache["\n.form-horizontal .modal-body .form-group{\n    margin-left: 0px;\n    margin-right: 0px;\n}\n"] = false
     document.head.removeChild(__vueify_style__)
   })
   if (!module.hot.data) {

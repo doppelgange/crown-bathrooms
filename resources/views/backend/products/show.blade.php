@@ -8,12 +8,8 @@
                 <tr>
                     <td><label>ID</label></td>
                     <td>{{$product->id}}</td>
-                </tr>
-                <tr>
                     <td><label>Name</label></td>
                     <td>{{$product->name}}</td>
-                </tr>
-                <tr>
                     <td><label>Category</label></td>
                     <td>
                         {{$product->category->name}}
@@ -22,48 +18,28 @@
                 <tr>
                     <td><label>Created at</label></td>
                     <td>{{$product->created_at}}</td>
+                    <td><label>Updated at</label></td>
+                    <td colspan="3">{{$product->updated_at}}</td>
                 </tr>
                 <tr>
-                    <td><label>Updated at</label></td>
-                    <td>{{$product->updated_at}}</td>
+                    <td><label>Description</label></td>
+                    <td colspan="5">
+                        {!! $product->name !!}
+                    </td>
                 </tr>
             </table>
             <h2 class="page-header">Product Variants Detail</h2>
             @foreach($product->variants as $variant)
-            <table class="table">
-                <tr>
-                    <td><label>ID</label></td>
-                    <td>{{$variant->id}}</td>
-                </tr>
-                <tr>
-                    <td><label>Name</label></td>
-                    <td>{{$variant->name}}</td>
-                </tr>
-                <tr>
-                    <td><label>Color</label></td>
-                    <td>{{$variant->color}}</td>
-                </tr>
-                <tr>
-                    <td><label>Width</label></td>
-                    <td>{{$variant->color}}</td>
-                </tr>
-                <tr>
-                    <td><label>Depth</label></td>
-                    <td>{{$variant->color}}</td>
-                </tr>
-                <tr>
-                    <td><label>Price</label></td>
-                    <td>{{$variant->color}}</td>
-                </tr>
-                <tr>
-                    <td><label>Special Price</label></td>
-                    <td>{{$variant->color}}</td>
-                </tr>
-                <tr>
-                    <td><label>Description</label></td>
-                    <td>{!!  $variant->description  !!}</td>
-                </tr>
-            </table>
+                <ul>
+                    <li><label>ID</label> {{$variant->id}}</li>
+                    <li><label>Name</label> {{$variant->name}}</li>
+                    <li><label>Color</label> {{$variant->color}}</li>
+                    <li><label>Width</label> {{$variant->width}}</li>
+                    <li><label>Depth</label> {{$variant->depth}}</li>
+                    <li><label>Price</label> {{$variant->price}}</li>
+                    <li><label>Special Price</label> {{$variant->special_price}}</li>
+                    <li><label>Description</label> {!!  $variant->description  !!}</li>
+                </ul>
             @endforeach
         </div>
     </div>

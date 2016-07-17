@@ -39,8 +39,9 @@ class ProductController extends Controller
     }
 
     public function create(){
+        $view = 'create';
         $categories = $this->categories;
-        return view('backend.products.create',compact('categories'));
+        return view('backend.products.create',compact('categories','view'));
     }
 
     /**
@@ -90,8 +91,9 @@ class ProductController extends Controller
      */
     public function edit(Product $product)
     {
+        $view = 'edit';
         $categories = $this->categories;
-        return view('backend.products.create',compact('product','categories'));
+        return view('backend.products.create',compact('product','categories','view'));
     }
 
     /**
