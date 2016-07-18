@@ -2,10 +2,12 @@
 
 @section('content')
     <h3 class="page-header">
-        @if($view =='create') Create @else Edit @endif Product Variant
+        @if($view =='create') Create @else Edit @endif Product Variant for
+            <a href="{{route('backend.product.show',$product->id)}}">{{$product->name}}</a>
         <div class="btn-toolbar pull-right">
-            <a href="{{route('backend.product.show',$product->id)}}" class="btn btn-primary"> Back to product page</a>
+            @if(isset($variant))
             <a href="{{route('backend.product.{product}.variant.show',[$product->id,$variant->id])}}" class="btn btn-primary"> View </a>
+            @endif
         </div>
 
     </h3>
