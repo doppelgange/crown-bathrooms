@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class ProductVariant extends Model
 {
     protected $guarded = ['id'];
+    protected $fillable = ['product_id','code','name','is_master','status','material',
+        'color','width','depth','description','price','special_price','created_at','updated_at'];
 
     public function product(){
         return $this->belongsTo('App\Product');

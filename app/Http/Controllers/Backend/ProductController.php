@@ -106,9 +106,9 @@ class ProductController extends Controller
     public function update(Product $product, ProductRequest $request)
     {
         //Create product
-        $product = Product::update($request->only(['category_id','name','description']));
+        $product->update($request->only(['category_id','name','description']));
 
-        return redirect(route('backend.product.show',$product->id));
+        return redirect()->back();
     }
 
     /**

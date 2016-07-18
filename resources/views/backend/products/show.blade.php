@@ -12,7 +12,9 @@
                     <td>{{$product->name}}</td>
                     <td><label>Category</label></td>
                     <td>
+                        <a href="{{route('backend.category.show', ['id' => $product->category->id])}}">
                         {{$product->category->name}}
+                        </a>
                     </td>
                 </tr>
                 <tr>
@@ -24,27 +26,12 @@
                 <tr>
                     <td><label>Description</label></td>
                     <td colspan="5">
-                        {!! $product->name !!}
+                        {!! $product->description !!}
                     </td>
                 </tr>
             </table>
             <h2 class="page-header">Product Variants Detail</h2>
-            @foreach($product->variants as $variant)
-                <ul>
-                    <li><label>ID</label> {{$variant->id}}</li>
-                    <li><label>Name</label> {{$variant->name}}</li>
-                    <li><label>Color</label> {{$variant->color}}</li>
-                    <li><label>Width</label> {{$variant->width}}</li>
-                    <li><label>Depth</label> {{$variant->depth}}</li>
-                    <li><label>Price</label> {{$variant->price}}</li>
-                    <li><label>Special Price</label> {{$variant->special_price}}</li>
-                    <li><label>Description</label> {!!  $variant->description  !!}</li>
-                </ul>
-            @endforeach
+            @include('backend.products.snippets.variant_list')
         </div>
     </div>
-    @if(count($product->subCategories))
-        <h2 class="sub-header">Sub Categories</h2>
-        @include('backend.categories.snippets.list',['categories'=>$product->subCategories()->paginate()])
-    @endif
 @endsection

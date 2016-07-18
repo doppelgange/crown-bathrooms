@@ -4,14 +4,7 @@
         <tr>
             <th>ID</th>
             <th>Name</th>
-            <th>Code</th>
             <th>Category Name</th>
-            <th>Material</th>
-            <th>Color</th>
-            <th>Width</th>
-            <th>Depth</th>
-            <th>Price</th>
-            <th>Special Price</th>
             <th>Updated at</th>
             <th>Action</th>
         </tr>
@@ -25,14 +18,7 @@
                         {{$product->name}}
                     </a>
                 </td>
-                <td>{{$product->code}}</td>
                 <td>{{link_to(route('backend.category.show',$product->category->id),$product->category->name,['target'=>'_blank'])}}</td>
-                <td>{{$product->material}}</td>
-                <td>{{$product->color}}</td>
-                <td>{{$product->width}}</td>
-                <td>{{$product->depth}}</td>
-                <td>{{$product->price}}</td>
-                <td>{{$product->special_price}}</td>
                 <td>{{$product->updated_at}}</td>
                 <td>
                     <a href="{{route('backend.product.edit', ['id' => $product->id])}}" class="btn btn-primary btn-xs">
