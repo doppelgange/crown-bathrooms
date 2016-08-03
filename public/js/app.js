@@ -11861,7 +11861,14 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = {
     components: {
-        'summernote-editor': require('./snippets/SummernoteEditor.vue')
+        'summernote-editor': require('./snippets/SummernoteEditor.vue'),
+        'upload': require('./snippets/Upload.vue')
+    },
+    methods: {
+        removeImage: function removeImage(e) {
+            var image = e.path[1];
+            image.remove();
+        }
     }
 };
 if (module.exports.__esModule) module.exports = module.exports.default
@@ -11875,7 +11882,7 @@ if (module.hot) {(function () {  module.hot.accept()
     hotAPI.update("_v-0935fd36", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
   }
 })()}
-},{"./snippets/SummernoteEditor.vue":10,"vue":4,"vue-hot-reload-api":2}],9:[function(require,module,exports){
+},{"./snippets/SummernoteEditor.vue":10,"./snippets/Upload.vue":11,"vue":4,"vue-hot-reload-api":2}],9:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -11902,7 +11909,7 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 exports.default = {
-    template: '<textarea :name="name" cols="30" rows="10"> </textarea>',
+    //        template:'<textarea :name="name" cols="30" rows="10"> </textarea>',
     props: {
         name: {
             type: String,
@@ -11936,9 +11943,10 @@ exports.default = {
                         data.append("file_" + i, files[i]);
                     }
                     this.$http.post('/backend/image', data).then(function (response) {
-                        for (var filename in response.data) {
+                        for (var file in response.data) {
+                            console.log(response.data[file].path);
                             var img = document.createElement("img");
-                            img.setAttribute("src", response.data[filename]);
+                            img.setAttribute("src", response.data[file].path);
                             this.control.summernote('insertNode', img);
                         }
                     }.bind(this), function (response) {
@@ -11950,7 +11958,7 @@ exports.default = {
     }
 };
 if (module.exports.__esModule) module.exports = module.exports.default
-;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<textarea name=\"{{name}}\" cols=\"30\" rows=\"10\"> </textarea>\n"
+;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<textarea :name=\"name\" cols=\"30\" rows=\"10\"> </textarea>\n"
 if (module.hot) {(function () {  module.hot.accept()
   var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), true)
@@ -11963,6 +11971,68 @@ if (module.hot) {(function () {  module.hot.accept()
     hotAPI.createRecord("_v-58043457", module.exports)
   } else {
     hotAPI.update("_v-58043457", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
+  }
+})()}
+},{"vue":4,"vue-hot-reload-api":2,"vueify/lib/insert-css":5}],11:[function(require,module,exports){
+var __vueify_insert__ = require("vueify/lib/insert-css")
+var __vueify_style__ = __vueify_insert__.insert("\n.img-thumbnail img{\n    max-width: 200px;\n    max-height: 200px;\n}\n.img-thumbnail{\n    margin:5px;\n    position: relative;\n}\n\n.img-thumbnail:hover .remove-image {\n    background: rgba(255,255,255,1);\n    color: #ff0000;\n}\n.remove-image {\n    position: absolute;\n    top: 1em;\n    right: 1em;\n    background: rgba(255,255,255,0.8);\n    width: 2em;\n    height: 2em;\n    border-radius: 1em;\n    line-height: 2em;\n    text-align: center;\n    cursor: pointer;\n}\n")
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = {
+    props: {
+        name: {
+            type: String,
+            required: false,
+            default: ''
+        },
+        url: {
+            required: false,
+            default: '/backend/image'
+        }
+    },
+    data: function data() {
+        return { images: [] };
+    },
+    methods: {
+        uploadImage: function uploadImage(e) {
+            var files = e.target.files || e.dataTransfer.files;
+            var data = new FormData();
+            for (var i = 0; i < files.length; i++) {
+                data.append("file_" + i, files[i]);
+            }
+            this.$http.post('/backend/image', data).then(function (response) {
+                for (var file in response.data) {
+                    console.log(response.data[file].path);
+                    this.images.push(response.data[file]);
+                }
+            }.bind(this), function (response) {
+                console.log('There is an error');
+            });
+        },
+        removeImage: function removeImage(e) {
+            var image = e.path[1];
+            image.remove();
+        }
+    }
+
+};
+if (module.exports.__esModule) module.exports = module.exports.default
+;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<div v-if=\"images\" v-for=\"image in images\" class=\"img-thumbnail\">\n    <img :src=\"image.path\">\n    <input :name=\"name\" :value=\"image.id\" type=\"hidden\">\n    <span class=\"fa fa-trash remove-image\" @click=\"removeImage\" aria-hidden=\"true\"></span>\n</div>\n<input type=\"file\" @change=\"uploadImage\" multiple=\"\">\n"
+if (module.hot) {(function () {  module.hot.accept()
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), true)
+  if (!hotAPI.compatible) return
+  module.hot.dispose(function () {
+    __vueify_insert__.cache["\n.img-thumbnail img{\n    max-width: 200px;\n    max-height: 200px;\n}\n.img-thumbnail{\n    margin:5px;\n    position: relative;\n}\n\n.img-thumbnail:hover .remove-image {\n    background: rgba(255,255,255,1);\n    color: #ff0000;\n}\n.remove-image {\n    position: absolute;\n    top: 1em;\n    right: 1em;\n    background: rgba(255,255,255,0.8);\n    width: 2em;\n    height: 2em;\n    border-radius: 1em;\n    line-height: 2em;\n    text-align: center;\n    cursor: pointer;\n}\n"] = false
+    document.head.removeChild(__vueify_style__)
+  })
+  if (!module.hot.data) {
+    hotAPI.createRecord("_v-6aaa9dac", module.exports)
+  } else {
+    hotAPI.update("_v-6aaa9dac", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
   }
 })()}
 },{"vue":4,"vue-hot-reload-api":2,"vueify/lib/insert-css":5}]},{},[6]);

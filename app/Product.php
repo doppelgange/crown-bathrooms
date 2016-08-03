@@ -20,15 +20,15 @@ class Product extends Model
     }
 
     public function resources(){
-        return $this->belongsToMany('App\Resource','product_resource')->withTimestamps();
+        return $this->belongsToMany('App\Resource','product_resources')->withTimestamps();
     }
 
     public function images(){
-        return $this->belongsToMany('App\Resource','product_resource')->wherePivot('type', 'image');
+        return $this->belongsToMany('App\Resource','product_resources')->wherePivot('resource_type', 'image');
     }
 
     public function attachments(){
-        return $this->belongsToMany('App\Resource','product_resource')->wherePivot('type', 'attachment');
+        return $this->belongsToMany('App\Resource','product_resources')->wherePivot('resource_type', 'attachment');
     }
 
 }

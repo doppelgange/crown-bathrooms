@@ -31,6 +31,19 @@
             </div>
         </div>
         <div class="form-group">
+            <label class="control-label  col-xs-2">Image</label>
+            <div class="col-xs-10">
+                @foreach($product->images as $image)
+                    <div class="img-thumbnail">
+                        <img src="{{$image->url}}"/>
+                        <input name="images[]" value="{{$image->id}}" type="hidden">
+                        <span class="fa fa-trash remove-image" @click="removeImage" aria-hidden="true"></span>
+                    </div>
+                @endforeach
+                <upload name="images[]"></upload>
+            </div>
+        </div>
+        <div class="form-group">
             <label class="control-label col-xs-2">Description</label>
             <div class="col-xs-10">
                 <summernote-editor name="description" text="{{isset($product)?$product->description : old('description')}}"></summernote-editor>

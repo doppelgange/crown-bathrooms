@@ -1,10 +1,10 @@
 <template>
-    <textarea name="{{name}}" cols="30" rows="10"> </textarea>
+    <textarea :name="name" cols="30" rows="10"> </textarea>
 </template>
 
 <script>
     export default {
-        template:'<textarea :name="name" cols="30" rows="10"> </textarea>',
+//        template:'<textarea :name="name" cols="30" rows="10"> </textarea>',
         props: {
             name: {
                 type: String,
@@ -38,9 +38,10 @@
                             data.append("file_"+i, files[i]);
                         }
                         this.$http.post('/backend/image',data).then(function(response){
-                            for(var filename in response.data){
+                            for(var file in response.data){
+                                console.log(response.data[file].path)
                                 var img = document.createElement("img");
-                                img.setAttribute("src", response.data[filename]);
+                                img.setAttribute("src", response.data[file].path);
                                 this.control.summernote('insertNode',img );
 
                             }

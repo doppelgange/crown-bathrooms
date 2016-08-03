@@ -24,6 +24,17 @@
                     <td colspan="3">{{$product->updated_at}}</td>
                 </tr>
                 <tr>
+                    <td><label>Images</label></td>
+                    <td colspan="5">
+                        @foreach($product->images as $image)
+                            <div class="img-thumbnail">
+                                <img src="{{$image->url}}"/>
+                                <input name="images[]" value="{{$image->id}}" type="hidden">
+                            </div>
+                        @endforeach
+                    </td>
+                </tr>
+                <tr>
                     <td><label>Description</label></td>
                     <td colspan="5">
                         {!! $product->description !!}

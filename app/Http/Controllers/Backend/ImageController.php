@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Backend;
 
 use App\Http\Controllers\Controller;
+use App\Resource;
 use Illuminate\Http\Request;
 use App\Http\Controllers;
 use App\Http\Requests;
@@ -39,13 +40,27 @@ class ImageController extends Controller
     public function store(Request $request)
     {
         $files = $request->allFiles();
+        Log::info($files);
         $uploadedFiles = [];
         foreach($files as $file=>$value){
             $filename =str_random(5).'_'.$value->getClientOriginalName();
-            $uploadedFiles[$filename] = '/storage/upload/'.$filename;
+            $imgUrl = '/storage/upload/'.$filename;
+
             Log::info($filename);
+
+            $resource = Resource::create([
+                'name' => $filename,
+                'path' => $imgUrl,
+                'mime_type' => $value->getMimeType()
+            ]);
+
             $result = $request->file($file)->move(storage_path().'/app/upload',$filename);
+            //insert into $resource table
+
+
+            $uploadedFiles[] = $resource;
             Log::info($result);
+//            dd($uploadedFiles);
         }
         return response()->json($uploadedFiles);
     }

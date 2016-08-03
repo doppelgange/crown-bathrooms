@@ -54,6 +54,10 @@ class ProductController extends Controller
     {
         //Create product
         $product = Product::create($request->only(['category_id','name','description']));
+        if($request->images){
+            //associate with images
+            $product->images()->attach($request->images);
+        }
 
         //Create master product variant
 
@@ -107,6 +111,12 @@ class ProductController extends Controller
     {
         //Create product
         $product->update($request->only(['category_id','name','description']));
+
+        //remove all images
+        $product->images()->detach();
+        //associate with images
+        $product->images()->attach($request->images);
+
 
         return redirect()->back();
     }
