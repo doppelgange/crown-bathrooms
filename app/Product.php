@@ -27,6 +27,10 @@ class Product extends Model
         return $this->belongsToMany('App\Resource','product_resources')->wherePivot('resource_type', 'image');
     }
 
+    public function feature_image(){
+        return $this->images()->first();
+    }
+
     public function attachments(){
         return $this->belongsToMany('App\Resource','product_resources')->wherePivot('resource_type', 'attachment');
     }

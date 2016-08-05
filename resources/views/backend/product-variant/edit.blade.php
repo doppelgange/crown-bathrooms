@@ -89,6 +89,19 @@
                     @endif
                 </div>
             </div>
+            <div class="form-group">
+                <label class="control-label  col-xs-2">Image</label>
+                <div class="col-xs-10">
+                    @foreach($variant->images as $image)
+                        <div class="img-thumbnail">
+                            <img src="{{$image->url}}"/>
+                            <input name="images[]" value="{{$image->id}}" type="hidden">
+                            <span class="fa fa-trash remove-image" @click="removeImage" aria-hidden="true"></span>
+                        </div>
+                    @endforeach
+                    <upload name="images[]"></upload>
+                </div>
+            </div>
             <div class="form-group @if($errors->first('description')) has-error @endif">
                 <label class="control-label col-xs-2">Description</label>
                 <div class="col-xs-10">

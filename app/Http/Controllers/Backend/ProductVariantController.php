@@ -50,6 +50,10 @@ class ProductVariantController extends Controller
     {
         //Create product
         $variant = ProductVariant::create(['product_id'=>$product->id]+$request->all());
+        if($request->images&&$variant->id){
+            //associate with images
+            $variant->images()->attach($request->images);
+        }
 
         $variant->id ? Flash::success('Product variant is created successfully.') : Flash::error('Failed to create product variant.');
 
@@ -95,6 +99,12 @@ class ProductVariantController extends Controller
         //Create product
         $variant->fill($request->all());
         $variant->save();
+
+        //remove all images
+        $variant->images()->detach();
+        //associate with images
+        $variant->images()->attach($request->images);
+
         return redirect()->back();
     }
 
