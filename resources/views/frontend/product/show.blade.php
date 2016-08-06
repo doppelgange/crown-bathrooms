@@ -1,4 +1,4 @@
-@extends('layouts.frontend.default')
+@extends('layouts.frontend.default',['vueView'  => 'FrontendProduct'])
 @section('main')
     @include('frontend.product.snippets.breadcrumb')
     <section class="content products">
@@ -6,48 +6,21 @@
             <article class="product-item product-single">
                 <div class="row">
                     <div class="col-xs-6">
-                        <div class="product-carousel-wrapper">
-                            <div id="product-carousel" class="owl-carousel owl-theme owl-loaded">
-                                <div class="owl-stage-outer">
-                                    <div>
-                                        {{--@if(count($product->images)>0)--}}
-                                            {{--@foreach($product->images as $image)--}}
-                                            {{--<div class="owl-item cloned" style="width: 355px; margin-right: 0px;">--}}
-                                                {{--<div class="item"><img src="{{$image->url}}" class="img-responsive" alt=""></div>--}}
-                                            {{--</div>--}}
-                                            {{--@endforeach--}}
-                                        {{--@else--}}
-                                            <div>
-                                                <div class="item"><img src="http://placehold.it/500x500.png" class="img-responsive" alt=""></div>
-                                            </div>
-                                        {{--@endif--}}
-                                    </div>
-                                </div>
-                                <div class="owl-controls">
-                                    <div class="owl-nav">
-                                        <div class="owl-prev" style="display: none;">prev</div>
-                                        <div class="owl-next" style="display: none;">next</div>
-                                    </div>
-                                    <div class="owl-dots" style="">
-                                        <div class="owl-dot"><span></span></div>
-                                        <div class="owl-dot"><span></span></div>
-                                        <div class="owl-dot"><span></span></div>
-                                        <div class="owl-dot active"><span></span></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        <product-image-slider
+                                :images="{{$product->images->toJson()}}"
+                                :feature-image = "'{{$product->feature_image}}'"
+                                ></product-image-slider>
                     </div>
                     <div class="col-xs-6">
                         <div class="product-body">
                             {{--<h3>{{$product->name}}</h3>--}}
-                            <span class="price">
-                                <span class="amount">{{$product->price or ' Pirice is not available'}}</span>
-                            </span>
                             <ul class="list-unstyled product-info">
                                 <li class="form-inline">
                                     <label class="form-label">Product variant:</label>
-                                    {{Form::select('variant_id',$variants,isset($variant_id)?$variant_id:old('variant_id'),['class'=>'form-control'])}}
+                                    {{Form::select('variant_id',$variants,isset($variant_id)?$variant_id:old('variant_id'),
+                                    [
+                                        'class'=>'form-control',
+                                    ])}}
                                 </li>
                                 <li><label>Code:</label> {{$product->code}}</li>
                                 <li><label>Category:</label> {{$product->category->name}}</li>
@@ -56,6 +29,9 @@
                                 <li><label>Width:</label> {{$product->width}}</li>
                                 <li><label>Depth:</label> {{$product->depth}}</li>
                             </ul>
+                            <span class="price">
+                                <span class="amount">{{$product->price or ' Pirice is not available'}}</span>
+                            </span>
                             <ul class="list-inline product-links">
                                 <li><a href="#" class="btn btn-success"><i class="fa fa-heart"></i>Add to selector</a></li>
                             </ul>
@@ -72,12 +48,9 @@
                 </ul>
                 <div class="tab-content">
                     <div role="tabpanel" class="tab-pane active" id="description">
-                        <h1>General Description</h1>
                         {!! $product->description !!}
-                        <h2>Product Variant description</h2>
                         @foreach($product->variants as $variant)
                             @if(!empty($variant->description))
-                                <h1>{!! $variant->name !!}</h1>
                                 {!! $variant->description !!}
                             @endif
                         @endforeach
@@ -97,7 +70,7 @@
                         <h3>{{$relatedProduct->name}}</h3>
                         <span class="price">
                             <span class="amount">{{$relatedProduct->price}}</span>
-                            <a href="#" class="btn btn-xs btn-success"><i class="fa fa-heart"></i>Add to selector</a>
+                            <a href="#" class="btn btn-xs btn-success" @click="addSelector()"><i class="fa fa-heart"></i>Add to selector</a>
                         </span>
                     </div>
                     <!-- PRODUCT - END -->

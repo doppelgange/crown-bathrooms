@@ -21,7 +21,7 @@ elixir(function(mix) {
         .copy('node_modules/summernote/dist/font', 'public/build/css/font')
         ;
 
-    mix.sass('app.scss');
+    mix.sass('app.scss','app.source.css');
     mix.sass('frontend.scss');
     mix.sass('backend.scss');
 
@@ -30,7 +30,7 @@ elixir(function(mix) {
         'node_modules/font-awesome/css/font-awesome.min.css',
         'node_modules/animate.css/animate.css',
         'node_modules/summernote/dist/summernote.css',
-        'public/css/app.css',
+        'public/css/app.source.css',
     ], 'public/css/app.css', './');
 
     mix.browserify('app.js');

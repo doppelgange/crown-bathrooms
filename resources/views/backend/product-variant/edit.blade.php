@@ -3,7 +3,7 @@
 @section('content')
     <h3 class="page-header">
         @if($view =='create') Create @else Edit @endif Product Variant for
-            <a href="{{route('backend.product.show',$product->id)}}">{{$product->name}}</a>
+            <a href="{{route('backend.product.edit',$product->id)}}">{{$product->name}}</a>
         <div class="btn-toolbar pull-right">
             @if(isset($variant))
             <a href="{{route('backend.product.{product}.variant.show',[$product->id,$variant->id])}}" class="btn btn-primary"> View </a>

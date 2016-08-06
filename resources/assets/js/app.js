@@ -10,6 +10,7 @@ new Vue({
     components: {
         FrontendHomeIndex,
         BackendCategoryEdit,
-        BackendProductEdit
+        BackendProductEdit,
+        FrontendProduct:require('./components/FrontendProduct.vue')
     }
 })

@@ -97,11 +97,6 @@ footer {
 .product-item .caption {
   font-size: 1.2em; }
 
-.price {
-  color: #666; }
-  .price .amount::before {
-    content: '$'; }
-
 .thumbnail-wrap {
   padding: 5px; }
 
@@ -113,6 +108,12 @@ header .navbar-default .navbar-nav li .thumbnail a {
   margin-bottom: 0px; }
 
 .product-item {
+  margin-top: 10px; }
+
+.product-tabs {
+  margin-top: 10px; }
+
+.tab-content {
   margin-top: 10px; }
 
 /*# sourceMappingURL=frontend.css.map */

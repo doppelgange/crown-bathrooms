@@ -124,12 +124,12 @@ footer {
         font-size: 1.2em;
     }
 }
-.price{
-    color:#666;
-    .amount::before{
-        content:'$';
-    }
-}
+//.price{
+//    color:#666;
+//    .amount::before{
+//        content:'$';
+//    }
+//}
 
 .thumbnail-wrap{
     padding: 5px;
@@ -146,7 +146,12 @@ header .navbar-default .navbar-nav li .thumbnail a{
     margin-top: 10px;
 }
 
-
+.product-tabs{
+    margin-top: 10px;
+}
+.tab-content{
+    margin-top: 10px;
+}
 
 
 

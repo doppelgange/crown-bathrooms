@@ -48,7 +48,7 @@ class Category extends Model
     }
     public function getImageUrlAttribute(){
 
-        return !is_null($this->image)? '/storage/'.$this->image->path:"http://placehold.it/150x150.png";
+        return !is_null($this->image)? '/storage/'.$this->image->path:"http://placehold.it/500x500.png";
     }
 
     /**

@@ -11827,11 +11827,12 @@ new _vue2.default({
     components: {
         FrontendHomeIndex: _FrontendHomeIndex2.default,
         BackendCategoryEdit: _BackendCategoryEdit2.default,
-        BackendProductEdit: _BackendProductEdit2.default
+        BackendProductEdit: _BackendProductEdit2.default,
+        FrontendProduct: require('./components/FrontendProduct.vue')
     }
 });
 
-},{"./components/BackendCategoryEdit.vue":7,"./components/BackendProductEdit.vue":8,"./components/FrontendHomeIndex.vue":9,"vue":4,"vue-resource":3}],7:[function(require,module,exports){
+},{"./components/BackendCategoryEdit.vue":7,"./components/BackendProductEdit.vue":8,"./components/FrontendHomeIndex.vue":9,"./components/FrontendProduct.vue":10,"vue":4,"vue-resource":3}],7:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -11853,7 +11854,7 @@ if (module.hot) {(function () {  module.hot.accept()
     hotAPI.update("_v-759ea18c", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
   }
 })()}
-},{"./snippets/SummernoteEditor.vue":10,"vue":4,"vue-hot-reload-api":2}],8:[function(require,module,exports){
+},{"./snippets/SummernoteEditor.vue":12,"vue":4,"vue-hot-reload-api":2}],8:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -11882,7 +11883,7 @@ if (module.hot) {(function () {  module.hot.accept()
     hotAPI.update("_v-0935fd36", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
   }
 })()}
-},{"./snippets/SummernoteEditor.vue":10,"./snippets/Upload.vue":11,"vue":4,"vue-hot-reload-api":2}],9:[function(require,module,exports){
+},{"./snippets/SummernoteEditor.vue":12,"./snippets/Upload.vue":13,"vue":4,"vue-hot-reload-api":2}],9:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -11901,6 +11902,79 @@ if (module.hot) {(function () {  module.hot.accept()
   }
 })()}
 },{"vue":4,"vue-hot-reload-api":2}],10:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = {
+    components: {
+        'product-image-slider': require('./snippets/ProductImageSlider.vue')
+    },
+    methods: {
+        updateVariant: function updateVariant(e) {
+            console.log(e.value);
+        }
+    }
+};
+if (module.exports.__esModule) module.exports = module.exports.default
+if (module.hot) {(function () {  module.hot.accept()
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), true)
+  if (!hotAPI.compatible) return
+  if (!module.hot.data) {
+    hotAPI.createRecord("_v-7ff8e6ad", module.exports)
+  } else {
+    hotAPI.update("_v-7ff8e6ad", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
+  }
+})()}
+},{"./snippets/ProductImageSlider.vue":11,"vue":4,"vue-hot-reload-api":2}],11:[function(require,module,exports){
+var __vueify_insert__ = require("vueify/lib/insert-css")
+var __vueify_style__ = __vueify_insert__.insert("\n.feature-image{\n    -webkit-transition: 1s;\n    transition: 1s;\n}\n.controls{\n    margin: 10px 0;\n}\n.thumbnail{\n    cursor: pointer;\n    margin-right: 10px;\n}\n")
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = {
+    props: {
+        images: {
+            type: Array,
+            required: true,
+            default: []
+        },
+        featureImage: {
+            required: true,
+            default: ''
+        },
+        currentVariantId: {
+            required: false,
+            default: ''
+        }
+    },
+    methods: {
+        changeFeatureImage: function changeFeatureImage($index) {
+            this.featureImage = this.images[$index].path;
+        }
+    }
+};
+if (module.exports.__esModule) module.exports = module.exports.default
+;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<div class=\"product-carousel-wrapper\">\n    <div id=\"product-carousel\" class=\"owl-carousel owl-theme owl-loaded\">\n        <div class=\"item\">\n            <img :src=\"featureImage\" class=\"img-responsive feature-image\" alt=\"\"></div>\n        <div class=\"controls\">\n            <img v-for=\"image in images\" :src=\"image.path\" class=\"thumbnail col-md-2\" @click=\"changeFeatureImage($index)\">\n        </div>\n    </div>\n</div>\n"
+if (module.hot) {(function () {  module.hot.accept()
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), true)
+  if (!hotAPI.compatible) return
+  module.hot.dispose(function () {
+    __vueify_insert__.cache["\n.feature-image{\n    -webkit-transition: 1s;\n    transition: 1s;\n}\n.controls{\n    margin: 10px 0;\n}\n.thumbnail{\n    cursor: pointer;\n    margin-right: 10px;\n}\n"] = false
+    document.head.removeChild(__vueify_style__)
+  })
+  if (!module.hot.data) {
+    hotAPI.createRecord("_v-3d720d54", module.exports)
+  } else {
+    hotAPI.update("_v-3d720d54", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
+  }
+})()}
+},{"vue":4,"vue-hot-reload-api":2,"vueify/lib/insert-css":5}],12:[function(require,module,exports){
 var __vueify_insert__ = require("vueify/lib/insert-css")
 var __vueify_style__ = __vueify_insert__.insert("\n.form-horizontal .modal-body .form-group{\n    margin-left: 0px;\n    margin-right: 0px;\n}\n")
 "use strict";
@@ -11932,7 +12006,7 @@ exports.default = {
             lang: this.language,
             height: this.height,
             minHeight: 300,
-            maxHeight: 600,
+            //                maxHeight: 600,
             callbacks: {
                 onInit: function () {
                     this.control.summernote("code", this.text);
@@ -11973,7 +12047,7 @@ if (module.hot) {(function () {  module.hot.accept()
     hotAPI.update("_v-58043457", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
   }
 })()}
-},{"vue":4,"vue-hot-reload-api":2,"vueify/lib/insert-css":5}],11:[function(require,module,exports){
+},{"vue":4,"vue-hot-reload-api":2,"vueify/lib/insert-css":5}],13:[function(require,module,exports){
 var __vueify_insert__ = require("vueify/lib/insert-css")
 var __vueify_style__ = __vueify_insert__.insert("\n.img-thumbnail img{\n    max-width: 200px;\n    max-height: 200px;\n}\n.img-thumbnail{\n    margin:5px;\n    position: relative;\n}\n\n.img-thumbnail:hover .remove-image {\n    background: rgba(255,255,255,1);\n    color: #ff0000;\n}\n.remove-image {\n    position: absolute;\n    top: 1em;\n    right: 1em;\n    background: rgba(255,255,255,0.8);\n    width: 2em;\n    height: 2em;\n    border-radius: 1em;\n    line-height: 2em;\n    text-align: center;\n    cursor: pointer;\n}\n")
 'use strict';

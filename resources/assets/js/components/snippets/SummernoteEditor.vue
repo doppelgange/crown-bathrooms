@@ -27,7 +27,7 @@
                 lang: this.language,
                 height: this.height,
                 minHeight: 300,
-                maxHeight: 600,
+//                maxHeight: 600,
                 callbacks: {
                     onInit: function() {
                         this.control.summernote("code", this.text);
