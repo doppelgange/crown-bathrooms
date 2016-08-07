@@ -116,4 +116,25 @@ header .navbar-default .navbar-nav li .thumbnail a {
 .tab-content {
   margin-top: 10px; }
 
+.product-info label, .product-title {
+  color: rgba(0, 0, 0, 0.6); }
+
+.product-title {
+  border-bottom: 1px solid #DFDFDF;
+  padding-bottom: 5px;
+  margin: 10px 0 20px 0;
+  font-size: 20px; }
+
+.product-variant-option {
+  display: inline-block;
+  padding: 5px;
+  margin: 5px;
+  border: dashed 1px rgba(0, 0, 0, 0.15);
+  background: transparent;
+  cursor: pointer; }
+
+.product-variant-option.active {
+  border: solid 1px rgba(0, 0, 0, 0.1);
+  background: rgba(0, 0, 0, 0.05); }
+
 /*# sourceMappingURL=frontend.css.map */

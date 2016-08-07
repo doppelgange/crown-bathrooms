@@ -4,6 +4,7 @@
         <table class="table table-striped table-hover form-inline">
             <thead>
             <tr>
+                <th>ID</th>
                 <th>Product</th>
                 <th>Item Price</th>
                 <th>Qty</th>
@@ -14,6 +15,9 @@
             <tbody>
             @foreach($cart as $row)
                 <tr>
+                    <td>
+                        {{$row->id}}
+                    </td>
                     <td>
                         {{$row->name}}
                     </td>

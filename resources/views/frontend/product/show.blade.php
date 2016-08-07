@@ -1,7 +1,10 @@
-@extends('layouts.frontend.default',['vueView'  => 'FrontendProduct'])
+@extends('layouts.frontend.default')
 @section('main')
     @include('frontend.product.snippets.breadcrumb')
     <section class="content products">
+        <component is="FrontendProduct"
+                   :variants = "{{$product->variants->toJson()}}"
+                   inline-template>
         <div class="container">
             <article class="product-item product-single">
                 <div class="row">
@@ -9,31 +12,42 @@
                         <product-image-slider
                                 :images="{{$product->images->toJson()}}"
                                 :feature-image = "'{{$product->feature_image}}'"
+                                :current-variant-id = "variantId"
                                 ></product-image-slider>
                     </div>
                     <div class="col-xs-6">
                         <div class="product-body">
                             {{--<h3>{{$product->name}}</h3>--}}
+                            <h3 class="product-title">@{{variant.name}}</h3>
                             <ul class="list-unstyled product-info">
-                                <li class="form-inline">
-                                    <label class="form-label">Product variant:</label>
-                                    {{Form::select('variant_id',$variants,isset($variant_id)?$variant_id:old('variant_id'),
-                                    [
-                                        'class'=>'form-control',
-                                    ])}}
+                                <li>
+                                    <label class="form-label">Plese choose from below options:</label>
                                 </li>
-                                <li><label>Code:</label> {{$product->code}}</li>
+                                <li>
+                                    <div v-for="variant in variants"
+                                         class="product-variant-option"
+                                         :class="{'active': $index == selectedVariantIndex}"
+                                    @click = "updateVariant($index)"
+                                    >@{{variant.name}}</div>
+                                </li>
+                                <li><label>Code:</label> @{{variant.code}}</li>
                                 <li><label>Category:</label> {{$product->category->name}}</li>
-                                <li><label>Material:</label> {{$product->material}}</li>
-                                <li><label>Color:</label> {{$product->color}}</li>
-                                <li><label>Width:</label> {{$product->width}}</li>
-                                <li><label>Depth:</label> {{$product->depth}}</li>
+                                <li><label>Material:</label> @{{variant.material}}</li>
+                                <li><label>Color:</label>@{{variant.color}}</li>
+                                <li><label>Width:</label> @{{variant.width}}</li>
+                                <li><label>Depth:</label> @{{variant.depth}}</li>
                             </ul>
                             <span class="price">
-                                <span class="amount">{{$product->price or ' Pirice is not available'}}</span>
+                                <span class="amount" v-if="variant.price>0">@{{variant.price}}</span>
+                                <span class="amount" v-else>Price is not available</span>
                             </span>
                             <ul class="list-inline product-links">
-                                <li><a href="#" class="btn btn-success"><i class="fa fa-heart"></i>Add to selector</a></li>
+                                <li><button href="#" class="btn btn-success" :disabled="buttonDisabled" @click="addToCart(variant.id,$event)">
+                                        <i class="fa fa-heart"></i>
+                                        <span v-if="!buttonDisabled">Add to selector</span>
+                                        <span v-else>Added to selector</span>
+                                    </button>
+                                </li>
                             </ul>
                         </div>
                     </div>
@@ -79,5 +93,6 @@
             </div>
             @endif
         </div>
+        </component>
     </section>
 @endsection

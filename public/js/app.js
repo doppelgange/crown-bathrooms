@@ -11911,11 +11911,37 @@ exports.default = {
     components: {
         'product-image-slider': require('./snippets/ProductImageSlider.vue')
     },
+    props: {
+        variants: {
+            type: Array,
+            required: false,
+            default: []
+        }
+    },
+    data: function data() {
+        return {
+            selectedVariantIndex: 0,
+            buttonDisabled: false
+        };
+    },
+    computed: {
+        variant: function variant() {
+            return this.variants[this.selectedVariantIndex];
+        }
+    },
     methods: {
-        updateVariant: function updateVariant(e) {
-            console.log(e.value);
+        updateVariant: function updateVariant(index) {
+            this.selectedVariantIndex = index;
+        },
+        addToCart: function addToCart(variantId) {
+            this.$http.post('/selector', { variant_id: variantId }).then(function (response) {
+                this.buttonDisabled = true;
+            }.bind(this), function (response) {
+                console.log('There is an error');
+            });
         }
     }
+
 };
 if (module.exports.__esModule) module.exports = module.exports.default
 if (module.hot) {(function () {  module.hot.accept()
@@ -11950,6 +11976,11 @@ exports.default = {
         currentVariantId: {
             required: false,
             default: ''
+        },
+        variants: {
+            type: Array,
+            required: false,
+            default: undefined
         }
     },
     methods: {

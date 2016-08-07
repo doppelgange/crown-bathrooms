@@ -39,6 +39,11 @@
             currentVariantId:{
                 required: false,
                 default: ''
+            },
+            variants:{
+                type: Array,
+                required: false,
+                default: undefined
             }
         },
         methods:{

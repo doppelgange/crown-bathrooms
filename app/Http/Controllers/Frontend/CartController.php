@@ -40,8 +40,15 @@ class CartController extends Controller
      */
     public function store(Request $request)
     {
-        $productVariant = ProductVariant::find($request->get('product_variant_id'));
-        Cart::add($productVariant, $productVariant->name, 1, $productVariant->price);
+        $variantId = $request->get('variant_id');
+        $variant = ProductVariant::find($variantId);
+        $result = Cart::add([
+            'id' => $variant->id,
+            'name' => $variant->name,
+            'qty' => 1,
+            'price' => $variant->price
+        ]);
+        return json_encode($result);
     }
 
     /**
