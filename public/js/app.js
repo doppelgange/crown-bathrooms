@@ -11806,33 +11806,34 @@ var _vue = require('vue');
 
 var _vue2 = _interopRequireDefault(_vue);
 
-var _FrontendHomeIndex = require('./components/FrontendHomeIndex.vue');
-
-var _FrontendHomeIndex2 = _interopRequireDefault(_FrontendHomeIndex);
-
-var _BackendCategoryEdit = require('./components/BackendCategoryEdit.vue');
-
-var _BackendCategoryEdit2 = _interopRequireDefault(_BackendCategoryEdit);
-
-var _BackendProductEdit = require('./components/BackendProductEdit.vue');
-
-var _BackendProductEdit2 = _interopRequireDefault(_BackendProductEdit);
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 _vue2.default.use(require('vue-resource'));
 
+//State
+var store = {
+    state: {
+        cart: {}
+    },
+    updateCart: function updateCart(cart) {
+        this.state.cart = cart;
+    }
+};
+
 new _vue2.default({
     el: 'body',
     components: {
-        FrontendHomeIndex: _FrontendHomeIndex2.default,
-        BackendCategoryEdit: _BackendCategoryEdit2.default,
-        BackendProductEdit: _BackendProductEdit2.default,
+        CartCount: require('./components/snippets/CartCount.vue'),
+        AlertMessage: require('./components/snippets/AlertMessage.vue'),
+
+        FrontendHomeIndex: require('./components/FrontendHomeIndex.vue'),
+        BackendCategoryEdit: require('./components/BackendCategoryEdit.vue'),
+        BackendProductEdit: require('./components/BackendProductEdit.vue'),
         FrontendProduct: require('./components/FrontendProduct.vue')
     }
 });
 
-},{"./components/BackendCategoryEdit.vue":7,"./components/BackendProductEdit.vue":8,"./components/FrontendHomeIndex.vue":9,"./components/FrontendProduct.vue":10,"vue":4,"vue-resource":3}],7:[function(require,module,exports){
+},{"./components/BackendCategoryEdit.vue":7,"./components/BackendProductEdit.vue":8,"./components/FrontendHomeIndex.vue":9,"./components/FrontendProduct.vue":10,"./components/snippets/AlertMessage.vue":11,"./components/snippets/CartCount.vue":12,"vue":4,"vue-resource":3}],7:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -11854,7 +11855,7 @@ if (module.hot) {(function () {  module.hot.accept()
     hotAPI.update("_v-759ea18c", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
   }
 })()}
-},{"./snippets/SummernoteEditor.vue":12,"vue":4,"vue-hot-reload-api":2}],8:[function(require,module,exports){
+},{"./snippets/SummernoteEditor.vue":14,"vue":4,"vue-hot-reload-api":2}],8:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -11883,7 +11884,7 @@ if (module.hot) {(function () {  module.hot.accept()
     hotAPI.update("_v-0935fd36", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
   }
 })()}
-},{"./snippets/SummernoteEditor.vue":12,"./snippets/Upload.vue":13,"vue":4,"vue-hot-reload-api":2}],9:[function(require,module,exports){
+},{"./snippets/SummernoteEditor.vue":14,"./snippets/Upload.vue":15,"vue":4,"vue-hot-reload-api":2}],9:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -11910,6 +11911,7 @@ Object.defineProperty(exports, "__esModule", {
 exports.default = {
     components: {
         'product-image-slider': require('./snippets/ProductImageSlider.vue')
+
     },
     props: {
         variants: {
@@ -11934,8 +11936,14 @@ exports.default = {
             this.selectedVariantIndex = index;
         },
         addToCart: function addToCart(variantId) {
-            this.$http.post('/selector', { variant_id: variantId }).then(function (response) {
-                this.buttonDisabled = true;
+            this.$http.post('/api/selector', { variant_id: variantId }).then(function (response) {
+                var data = response.data;
+                //                    this.buttonDisabled = true
+                this.$parent.$broadcast('cart-change', data);
+                this.$parent.$broadcast('show-message', {
+                    message: this.variant.name + ' has been added to selector successfully!',
+                    styleClass: 'alert-success'
+                });
             }.bind(this), function (response) {
                 console.log('There is an error');
             });
@@ -11954,7 +11962,138 @@ if (module.hot) {(function () {  module.hot.accept()
     hotAPI.update("_v-7ff8e6ad", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
   }
 })()}
-},{"./snippets/ProductImageSlider.vue":11,"vue":4,"vue-hot-reload-api":2}],11:[function(require,module,exports){
+},{"./snippets/ProductImageSlider.vue":13,"vue":4,"vue-hot-reload-api":2}],11:[function(require,module,exports){
+var __vueify_insert__ = require("vueify/lib/insert-css")
+var __vueify_style__ = __vueify_insert__.insert("\n.alert{\n    position:fixed ;\n    top: 10px;\n    z-index: 1;\n}\n")
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _vue = require('vue');
+
+var _vue2 = _interopRequireDefault(_vue);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+_vue2.default.transition('fade', {
+    enterClass: 'fadeIn',
+    leaveClass: 'fadeOut'
+});
+
+exports.default = {
+    data: function data() {
+        return {
+            styleClass: '',
+            message: ''
+        };
+    },
+    methods: {
+        showMessage: function showMessage(data) {
+            this.clearMessage();
+            this.styleClass = data.styleClass;
+            this.message = data.message;
+            setTimeout(this.clearMessage, 5000);
+        },
+        clearMessage: function clearMessage() {
+            this.message = '';
+            this.styleClass = '';
+        }
+    },
+    events: {
+        'show-message': function showMessage(data) {
+            this.showMessage(data);
+        }
+    }
+
+};
+if (module.exports.__esModule) module.exports = module.exports.default
+;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<div class=\"alert alert-dismissible animated\" :class=\"styleClass\" transition=\"fade\" v-show=\"message\">\n    <button type=\"button\" class=\"close\" aria-label=\"Close\" @click=\"clearMessage\"><span>×</span></button>\n    {{message}}\n</div>\n"
+if (module.hot) {(function () {  module.hot.accept()
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), true)
+  if (!hotAPI.compatible) return
+  module.hot.dispose(function () {
+    __vueify_insert__.cache["\n.alert{\n    position:fixed ;\n    top: 10px;\n    z-index: 1;\n}\n"] = false
+    document.head.removeChild(__vueify_style__)
+  })
+  if (!module.hot.data) {
+    hotAPI.createRecord("_v-1a384c74", module.exports)
+  } else {
+    hotAPI.update("_v-1a384c74", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
+  }
+})()}
+},{"vue":4,"vue-hot-reload-api":2,"vueify/lib/insert-css":5}],12:[function(require,module,exports){
+var __vueify_insert__ = require("vueify/lib/insert-css")
+var __vueify_style__ = __vueify_insert__.insert("\n")
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = {
+    props: {
+        //            cartCount:{
+        //                type: Number,
+        //                required: true,
+        //                default: 0
+        //            },
+        //            cartItems: {
+        //                type: Object,
+        //                required: false,
+        //                default: ''
+        //            }
+    },
+    data: function data() {
+        return {
+            cartCount: 0,
+            cartItems: []
+        };
+    },
+    methods: {
+        updateCart: function updateCart(data) {
+            if (data) {
+                this.cartCount = data.cartCount;
+                this.cartItems = data.cartItems;
+            } else {
+                this.$http.get('/api/selector').then(function (response) {
+                    var data = response.data;
+                    this.cartCount = data.cartCount;
+                    this.cartItems = data.cartItems;
+                }.bind(this), function (response) {
+                    console.log('There is an error');
+                });
+            }
+        }
+    },
+    events: {
+        'cart-change': function cartChange(cart) {
+            this.updateCart(cart);
+        }
+    },
+    ready: function ready() {
+        this.updateCart();
+    }
+
+};
+if (module.exports.__esModule) module.exports = module.exports.default
+;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<span class=\"badge\" :class=\"{'progress-bar-danger': cartCount > 0 }\">{{cartCount}}</span>\n"
+if (module.hot) {(function () {  module.hot.accept()
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), true)
+  if (!hotAPI.compatible) return
+  module.hot.dispose(function () {
+    __vueify_insert__.cache["\n"] = false
+    document.head.removeChild(__vueify_style__)
+  })
+  if (!module.hot.data) {
+    hotAPI.createRecord("_v-4c814e36", module.exports)
+  } else {
+    hotAPI.update("_v-4c814e36", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
+  }
+})()}
+},{"vue":4,"vue-hot-reload-api":2,"vueify/lib/insert-css":5}],13:[function(require,module,exports){
 var __vueify_insert__ = require("vueify/lib/insert-css")
 var __vueify_style__ = __vueify_insert__.insert("\n.feature-image{\n    -webkit-transition: 1s;\n    transition: 1s;\n}\n.controls{\n    margin: 10px 0;\n}\n.thumbnail{\n    cursor: pointer;\n    margin-right: 10px;\n}\n")
 'use strict';
@@ -12005,7 +12144,7 @@ if (module.hot) {(function () {  module.hot.accept()
     hotAPI.update("_v-3d720d54", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
   }
 })()}
-},{"vue":4,"vue-hot-reload-api":2,"vueify/lib/insert-css":5}],12:[function(require,module,exports){
+},{"vue":4,"vue-hot-reload-api":2,"vueify/lib/insert-css":5}],14:[function(require,module,exports){
 var __vueify_insert__ = require("vueify/lib/insert-css")
 var __vueify_style__ = __vueify_insert__.insert("\n.form-horizontal .modal-body .form-group{\n    margin-left: 0px;\n    margin-right: 0px;\n}\n")
 "use strict";
@@ -12078,7 +12217,7 @@ if (module.hot) {(function () {  module.hot.accept()
     hotAPI.update("_v-58043457", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
   }
 })()}
-},{"vue":4,"vue-hot-reload-api":2,"vueify/lib/insert-css":5}],13:[function(require,module,exports){
+},{"vue":4,"vue-hot-reload-api":2,"vueify/lib/insert-css":5}],15:[function(require,module,exports){
 var __vueify_insert__ = require("vueify/lib/insert-css")
 var __vueify_style__ = __vueify_insert__.insert("\n.img-thumbnail img{\n    max-width: 200px;\n    max-height: 200px;\n}\n.img-thumbnail{\n    margin:5px;\n    position: relative;\n}\n\n.img-thumbnail:hover .remove-image {\n    background: rgba(255,255,255,1);\n    color: #ff0000;\n}\n.remove-image {\n    position: absolute;\n    top: 1em;\n    right: 1em;\n    background: rgba(255,255,255,0.8);\n    width: 2em;\n    height: 2em;\n    border-radius: 1em;\n    line-height: 2em;\n    text-align: center;\n    cursor: pointer;\n}\n")
 'use strict';

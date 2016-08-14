@@ -10,6 +10,7 @@
     @yield('head.script')
 </head>
 <body>
+    @yield('body.topbar')
     @if(isset($vueView))
     <component is="{{$vueView}}" inline-template>
     @endif

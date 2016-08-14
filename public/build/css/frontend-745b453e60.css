@@ -30,8 +30,9 @@ body {
 
 header {
   background: #fff;
-  padding: 20px 0; }
+  padding: 0; }
   header .navbar {
+    padding: 20px 0;
     margin-bottom: 0px;
     border: 0px; }
   header .navbar-brand {

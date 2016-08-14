@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Frontend;
+namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\ProductVariant;
@@ -18,8 +18,10 @@ class CartController extends Controller
      */
     public function index()
     {
-        $cart = Cart::content();
-        return view('frontend.cart.index',compact(['cart']));
+        return  [
+            'cartCount'     =>Cart::count(),
+            'cartItems' => Cart::content()
+        ];
     }
 
     /**
@@ -40,7 +42,21 @@ class CartController extends Controller
      */
     public function store(Request $request)
     {
+        $variantId = $request->get('variant_id');
+        $variant = ProductVariant::find($variantId);
+        Cart::add([
+            'id' => $variant->id,
+            'name' => $variant->name,
+            'qty' => 1,
+            'price' => $variant->price
+        ]);
 
+        $result = [
+            'cartCount'     =>Cart::count(),
+            'cartItems' => Cart::content()
+        ];
+
+        return $result;
     }
 
     /**
@@ -85,6 +101,6 @@ class CartController extends Controller
      */
     public function destroy($id)
     {
-        //
+
     }
 }

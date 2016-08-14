@@ -1,10 +1,12 @@
 @extends('layouts.frontend.default')
+@section('body.before')
+    <component is="FrontendProduct"
+               :variants = "{{$product->variants->toJson()}}"
+               inline-template>
+@endsection
 @section('main')
     @include('frontend.product.snippets.breadcrumb')
     <section class="content products">
-        <component is="FrontendProduct"
-                   :variants = "{{$product->variants->toJson()}}"
-                   inline-template>
         <div class="container">
             <article class="product-item product-single">
                 <div class="row">
@@ -93,6 +95,8 @@
             </div>
             @endif
         </div>
-        </component>
     </section>
+@endsection
+@section('body.after')
+    </component>
 @endsection

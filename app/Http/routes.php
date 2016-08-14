@@ -21,6 +21,8 @@ Route::get('/home', 'HomeController@index');
 Route::get('/product', 'Frontend\FrontendProductController@index');
 Route::resource('/category/{category}/product', 'Frontend\FrontendProductController');
 Route::resource('/selector', 'Frontend\CartController');
+Route::resource('api/selector', 'Api\CartController');
+
 
 Route::get('/test',function(){
     return view('frontend.test');
