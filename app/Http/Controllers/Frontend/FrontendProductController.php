@@ -19,7 +19,6 @@ class FrontendProductController extends Controller
      */
     public function index(Category $category)
     {
-
         if(is_null($category->id)){
             $products = Product::paginate();
         }else{
@@ -39,6 +38,7 @@ class FrontendProductController extends Controller
      */
     public function show(Category $category,Product $product)
     {
+        $category = $product->category;
         $variants = $product->variants()->pluck('name','id')->all();
         return view('frontend.product.show')->with(compact('product','category','variants'));
     }

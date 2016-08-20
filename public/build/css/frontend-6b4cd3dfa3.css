@@ -92,7 +92,11 @@ footer {
   text-decoration: none; }
 
 .product-item .caption {
-  font-size: 1.2em; }
+  height: 70px;
+  max-height: 70px;
+  font-size: 1em;
+  text-overflow: ellipsis;
+}
 
 .thumbnail-wrap {
   padding: 5px; }
@@ -102,6 +106,9 @@ header .navbar-default .navbar-nav li .thumbnail a {
   display: block; }
 
 .thumbnail {
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  border-radius: 0;
   margin-bottom: 0px; }
 
 .product-item {
