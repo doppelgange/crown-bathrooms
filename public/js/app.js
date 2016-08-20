@@ -11829,11 +11829,12 @@ new _vue2.default({
         FrontendHomeIndex: require('./components/FrontendHomeIndex.vue'),
         BackendCategoryEdit: require('./components/BackendCategoryEdit.vue'),
         BackendProductEdit: require('./components/BackendProductEdit.vue'),
-        FrontendProduct: require('./components/FrontendProduct.vue')
+        FrontendProduct: require('./components/FrontendProduct.vue'),
+        FrontendCart: require('./components/FrontendCart.vue')
     }
 });
 
-},{"./components/BackendCategoryEdit.vue":7,"./components/BackendProductEdit.vue":8,"./components/FrontendHomeIndex.vue":9,"./components/FrontendProduct.vue":10,"./components/snippets/AlertMessage.vue":11,"./components/snippets/CartCount.vue":12,"vue":4,"vue-resource":3}],7:[function(require,module,exports){
+},{"./components/BackendCategoryEdit.vue":7,"./components/BackendProductEdit.vue":8,"./components/FrontendCart.vue":9,"./components/FrontendHomeIndex.vue":10,"./components/FrontendProduct.vue":11,"./components/snippets/AlertMessage.vue":12,"./components/snippets/CartCount.vue":13,"vue":4,"vue-resource":3}],7:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -11855,7 +11856,7 @@ if (module.hot) {(function () {  module.hot.accept()
     hotAPI.update("_v-759ea18c", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
   }
 })()}
-},{"./snippets/SummernoteEditor.vue":14,"vue":4,"vue-hot-reload-api":2}],8:[function(require,module,exports){
+},{"./snippets/SummernoteEditor.vue":15,"vue":4,"vue-hot-reload-api":2}],8:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -11884,7 +11885,56 @@ if (module.hot) {(function () {  module.hot.accept()
     hotAPI.update("_v-0935fd36", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
   }
 })()}
-},{"./snippets/SummernoteEditor.vue":14,"./snippets/Upload.vue":15,"vue":4,"vue-hot-reload-api":2}],9:[function(require,module,exports){
+},{"./snippets/SummernoteEditor.vue":15,"./snippets/Upload.vue":16,"vue":4,"vue-hot-reload-api":2}],9:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = {
+    data: function data() {
+        return { hideItems: [] };
+    },
+    methods: {
+        removeItem: function removeItem(rowId, e) {
+            this.$http.delete('/api/selector/' + rowId).then(function (response) {
+                this.$parent.$broadcast('show-message', {
+                    message: 'Item has been deleted successfully!',
+                    styleClass: 'alert-success'
+                });
+            }.bind(this), function (response) {
+                console.log('There is an error');
+            });
+            this.$parent.$broadcast('cart-change');
+            this.hideItems.$set(this.hideItems.length, rowId);
+        },
+        updateQty: function updateQty(rowId, e) {
+            var qty = e.target.value;
+            this.$http.put('/api/selector/' + rowId, { qty: qty }).then(function (response) {
+                this.$parent.$broadcast('cart-change');
+                this.$parent.$broadcast('show-message', {
+                    message: 'Item qty has been updated to ' + qty + ' successfully!',
+                    styleClass: 'alert-success'
+                });
+            }.bind(this), function (response) {
+                console.log('There is an error');
+            });
+        }
+    }
+
+};
+if (module.exports.__esModule) module.exports = module.exports.default
+if (module.hot) {(function () {  module.hot.accept()
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), true)
+  if (!hotAPI.compatible) return
+  if (!module.hot.data) {
+    hotAPI.createRecord("_v-487618d2", module.exports)
+  } else {
+    hotAPI.update("_v-487618d2", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
+  }
+})()}
+},{"vue":4,"vue-hot-reload-api":2}],10:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -11902,7 +11952,7 @@ if (module.hot) {(function () {  module.hot.accept()
     hotAPI.update("_v-a1ec851e", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
   }
 })()}
-},{"vue":4,"vue-hot-reload-api":2}],10:[function(require,module,exports){
+},{"vue":4,"vue-hot-reload-api":2}],11:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -11962,7 +12012,7 @@ if (module.hot) {(function () {  module.hot.accept()
     hotAPI.update("_v-7ff8e6ad", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
   }
 })()}
-},{"./snippets/ProductImageSlider.vue":13,"vue":4,"vue-hot-reload-api":2}],11:[function(require,module,exports){
+},{"./snippets/ProductImageSlider.vue":14,"vue":4,"vue-hot-reload-api":2}],12:[function(require,module,exports){
 var __vueify_insert__ = require("vueify/lib/insert-css")
 var __vueify_style__ = __vueify_insert__.insert("\n.alert{\n    position:fixed ;\n    top: 10px;\n    z-index: 1;\n}\n")
 'use strict';
@@ -12024,7 +12074,7 @@ if (module.hot) {(function () {  module.hot.accept()
     hotAPI.update("_v-1a384c74", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
   }
 })()}
-},{"vue":4,"vue-hot-reload-api":2,"vueify/lib/insert-css":5}],12:[function(require,module,exports){
+},{"vue":4,"vue-hot-reload-api":2,"vueify/lib/insert-css":5}],13:[function(require,module,exports){
 var __vueify_insert__ = require("vueify/lib/insert-css")
 var __vueify_style__ = __vueify_insert__.insert("\n")
 'use strict';
@@ -12093,7 +12143,7 @@ if (module.hot) {(function () {  module.hot.accept()
     hotAPI.update("_v-4c814e36", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
   }
 })()}
-},{"vue":4,"vue-hot-reload-api":2,"vueify/lib/insert-css":5}],13:[function(require,module,exports){
+},{"vue":4,"vue-hot-reload-api":2,"vueify/lib/insert-css":5}],14:[function(require,module,exports){
 var __vueify_insert__ = require("vueify/lib/insert-css")
 var __vueify_style__ = __vueify_insert__.insert("\n.feature-image{\n    -webkit-transition: 1s;\n    transition: 1s;\n}\n.controls{\n    margin: 10px 0;\n}\n.thumbnail{\n    cursor: pointer;\n    margin-right: 10px;\n}\n")
 'use strict';
@@ -12144,7 +12194,7 @@ if (module.hot) {(function () {  module.hot.accept()
     hotAPI.update("_v-3d720d54", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
   }
 })()}
-},{"vue":4,"vue-hot-reload-api":2,"vueify/lib/insert-css":5}],14:[function(require,module,exports){
+},{"vue":4,"vue-hot-reload-api":2,"vueify/lib/insert-css":5}],15:[function(require,module,exports){
 var __vueify_insert__ = require("vueify/lib/insert-css")
 var __vueify_style__ = __vueify_insert__.insert("\n.form-horizontal .modal-body .form-group{\n    margin-left: 0px;\n    margin-right: 0px;\n}\n")
 "use strict";
@@ -12217,7 +12267,7 @@ if (module.hot) {(function () {  module.hot.accept()
     hotAPI.update("_v-58043457", module.exports, (typeof module.exports === "function" ? module.exports.options : module.exports).template)
   }
 })()}
-},{"vue":4,"vue-hot-reload-api":2,"vueify/lib/insert-css":5}],15:[function(require,module,exports){
+},{"vue":4,"vue-hot-reload-api":2,"vueify/lib/insert-css":5}],16:[function(require,module,exports){
 var __vueify_insert__ = require("vueify/lib/insert-css")
 var __vueify_style__ = __vueify_insert__.insert("\n.img-thumbnail img{\n    max-width: 200px;\n    max-height: 200px;\n}\n.img-thumbnail{\n    margin:5px;\n    position: relative;\n}\n\n.img-thumbnail:hover .remove-image {\n    background: rgba(255,255,255,1);\n    color: #ff0000;\n}\n.remove-image {\n    position: absolute;\n    top: 1em;\n    right: 1em;\n    background: rgba(255,255,255,0.8);\n    width: 2em;\n    height: 2em;\n    border-radius: 1em;\n    line-height: 2em;\n    text-align: center;\n    cursor: pointer;\n}\n")
 'use strict';

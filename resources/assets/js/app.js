@@ -21,6 +21,7 @@ new Vue({
         FrontendHomeIndex:require('./components/FrontendHomeIndex.vue'),
         BackendCategoryEdit:require('./components/BackendCategoryEdit.vue'),
         BackendProductEdit:require('./components/BackendProductEdit.vue'),
-        FrontendProduct:require('./components/FrontendProduct.vue')
+        FrontendProduct:require('./components/FrontendProduct.vue'),
+        FrontendCart:require('./components/FrontendCart.vue')
     }
 })

@@ -1,4 +1,4 @@
-@extends('layouts.frontend.default')
+@extends('layouts.frontend.default',['vueView'  => 'FrontendCart'])
 @section('main')
     <div class="container">
         <table class="table table-striped table-hover form-inline">
@@ -14,7 +14,7 @@
             </thead>
             <tbody>
             @foreach($cart as $row)
-                <tr>
+                <tr v-show="hideItems.indexOf('{{$row->rowId}}') <0 ">
                     <td>
                         {{$row->id}}
                     </td>
@@ -22,9 +22,16 @@
                         {{$row->name}}
                     </td>
                     <td>{{$row->price(2)}}</td>
-                    <td><input type="number" value="{{$row->qty}}" class="form-control"></td>
+                    <td>
+                        <input
+                            type="number" value="{{$row->qty}}"
+                            class="form-control"
+                            @change="updateQty('{{$row->rowId}}',$event)"></td>
                     <td>{{$row->subtotal(2)}}</td>
-                    <td> <span class="btn btn-xs btn-danger"> <i class="fa fa-trash" aria-hidden="true"></i> Delete</span></td>
+                    <td>
+                        <span
+                            class="btn btn-xs btn-danger"
+                            @click="removeItem('{{$row->rowId}}',$event)"> <i class="fa fa-trash" aria-hidden="true"></i> Delete</span></td>
                 </tr>
             @endforeach
 
@@ -36,8 +43,8 @@
                     <td class="text-right">Total</td>
                     <td>{{Cart::total()}}</td>
                     <td></td>
+                    <td></td>
                 </tr>
-
             </tfoot>
         </table>
 
