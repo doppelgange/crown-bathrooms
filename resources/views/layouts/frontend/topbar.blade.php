@@ -6,9 +6,18 @@
             <a href="#"><i class="fa fa-instagram fa-1x" aria-hidden="true"></i></a>
             <a href="#"><i class="fa fa-google-plus-official fa-1x" aria-hidden="true"></i></a>
         </span>
-        <span class="pull-right">
-            <a href="#"><i class="fa fa-map-marker f-1x"></i> 62 Waione St, Petone, Lower Hutt 5012</a>
-            <a href="#"><i class="fa fa-phone fa-1x" aria-hidden="true"></i>  04-920 9991</a>
+        <span class="top-menu">
+            <ul class="top-dropdown">
+                <li>
+                    <a href="#"><i class="fa fa-map-marker f-1x"></i> 62 Waione St, Petone, Lower Hutt, Wellington</a>
+                    <a href="#"><i class="fa fa-phone fa-1x" aria-hidden="true"></i> 04 920 9991</a>
+                    <span class="fa fa-angle-down"></span>
+                </li>
+                <li>
+                    <a href="#"><i class="fa fa-map-marker f-1x"></i>178A Carlyle Street, Sydenham, Christchurch</a>
+                    <a href="#"><i class="fa fa-phone fa-1x" aria-hidden="true"></i> 03 379 8889</a>
+                </li>
+            </ul>
             <a href="/selector/">
                 <i class="fa fa-heart fa-1x" aria-hidden="true"></i>
                 Selector

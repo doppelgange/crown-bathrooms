@@ -96,14 +96,43 @@ footer {
 
 .top-bar{
     background:$dark-background-color;
+    color: $light-color;
+    .container { position: relative; z-index: 1;}
     a{
         color: $light-color;
         display: inline-block;
         padding: 5px;
+        text-decoration: none;
         &:hover{
             color:rgba($light-color,0.8);
             text-decoration: none;
         }
+    }
+
+    .top-menu{
+        position: absolute;
+        right: 0;
+    }
+    .top-dropdown{
+        height: 30px;
+        overflow-y: hidden;
+        margin: 0;
+        padding: 0;
+        display: inline-block;
+        transition: all 0.5s;
+        float: left;
+    }
+    .top-dropdown:hover {
+        height: 60px;
+    }
+    .top-dropdown li{
+        background:$dark-background-color;
+        padding: 0 10px;
+        cursor: pointer;
+        list-style: none;
+    }
+    .top-dropdown i {
+        padding: 0 5px;
     }
 }
 
