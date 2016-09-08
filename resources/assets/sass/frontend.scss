@@ -8,6 +8,7 @@ $open-sans :'Open Sans', sans-serif;
 
 $light-color: #ecf0f1;
 $dark-background-color:#2c3e50;
+$highlight-color:#c46f4a;
 
 /*--
 Common Css
@@ -140,6 +141,11 @@ footer {
 //
 // Breadcrumb
 // --------------------------------------------------
+.breadcrumb{
+    background: none;
+    margin-bottom: 0;
+    padding: 8px 5px;
+}
 .breadcrumb-current{margin: 0px 5px 5px 10px;}
 
 //
@@ -150,7 +156,13 @@ footer {
         text-decoration: none;
     }
     .caption{
-        font-size: 1.2em;
+        font-size: 1.1em;
+        font-weight: lighter;
+        transition: all 0.5s;
+    }
+    .caption:hover{
+        color: $highlight-color;
+        background: $highlight-color*5;
     }
 }
 //.price{
@@ -169,6 +181,7 @@ header .navbar-default .navbar-nav li .thumbnail a{
 }
 .thumbnail{
     margin-bottom: 0px;
+    border: none;
 }
 
 .product-item {
@@ -208,6 +221,59 @@ header .navbar-default .navbar-nav li .thumbnail a{
 .no-gutter > [class*='col-'] {
     padding-right:0;
     padding-left:0;
+}
+
+.product-sidebar{
+    background: #fcfcfc;
+    margin: 15px 0;
+    padding: 5px;
+}
+.product-sidebar {
+    .level1 {
+        padding: 5px 0;
+        margin: 0;
+        font-weight: bold;
+        border-bottom: 2px solid $highlight-color;
+    }
+    .level2 {
+        font-weight: bold;
+        background: #eef5f7;
+        border-radius: 4px;
+        padding: 2px 5px;
+        margin-right: 5px;
+    }
+    .level2, .level3{
+        line-height: 2em
+    }
+    .level3:after{
+        color: #c4dde4;
+        content: ' | ';
+    }
+    .level2:hover {
+        background: #c4dde4;
+    }
+    .level2:after {
+        color: #97ccd4;
+        content: ' > ';
+    }
+    .level1 a {
+        color: $highlight-color;
+    }
+    .level1 a, .level2 a {
+        text-decoration: none;
+    }
+    .level2 a:hover,.level3 a:hover, {
+        color: #173d5f;
+    }
+    ul {
+        margin: 0;
+        list-style: none;
+        padding: 10px 0;
+        border-bottom: 1px dashed #f0f0f0;
+    }
+    ul li {
+        display: inline;
+    }
 }
 
 

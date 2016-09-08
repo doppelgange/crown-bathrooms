@@ -25,7 +25,8 @@ class FrontendProductController extends Controller
             $products = Product::whereIn('category_id',$category->getSubCategoryRecursively())
                 ->paginate();
         }
-        return view('frontend.product.index',compact(['products','category']));
+        $categories = Category::where('parent_category_id',0)->get();
+        return view('frontend.product.index',compact(['products','category','categories']));
     }
 
     /**
