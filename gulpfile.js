@@ -21,7 +21,7 @@ elixir(function(mix) {
         .copy('node_modules/summernote/dist/font', 'public/build/css/font')
         ;
 
-    mix.sass('app.scss','app.source.css');
+    mix.sass('app.scss','public/css/app.source.css');
     mix.sass('frontend.scss');
     mix.sass('backend.scss');
 
