@@ -45,7 +45,7 @@
             <label class="control-label col-xs-2">Image</label>
             <div class="col-xs-10">
                 @if(!empty($category))
-                    <img src="{{$category->image_url}}" alt="" class="img-rounded">
+                    <img src="{{$category->image_url}}" alt="" class="img-rounded" style="max-width: 300px">
                 @endif
                 {{Form::file('category_image',['accept'=>'image/*'])}}
             </div>

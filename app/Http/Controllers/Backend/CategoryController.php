@@ -130,9 +130,11 @@ class CategoryController extends Controller
         //Save image first
         if ($request->hasFile('category_image')) {
             $file = $request->file('category_image');
-            $path = 'category/' . $file->getClientOriginalName();
+            $filename =str_random(5).'_'.$file->getClientOriginalName();
+
+            $path = '/storage/upload/' .$filename;
 //            if (!Storage::has($path)) {
-                if (Storage::put($path, file_get_contents($file->getRealPath()))) {
+                if (Storage::put('upload/'.$filename, file_get_contents($file->getRealPath()))) {
                     $resource = Resource::create([
                         'name' => $file->getClientOriginalName(),
                         'path' => $path,
