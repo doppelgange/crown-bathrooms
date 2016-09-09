@@ -33,13 +33,15 @@
         <div class="form-group">
             <label class="control-label  col-xs-2">Image</label>
             <div class="col-xs-10">
-                @foreach($product->images as $image)
-                    <div class="img-thumbnail">
-                        <img src="{{$image->url}}"/>
-                        <input name="images[]" value="{{$image->id}}" type="hidden">
-                        <span class="fa fa-trash remove-image" @click="removeImage" aria-hidden="true"></span>
-                    </div>
-                @endforeach
+                @if(isset($product))
+                    @foreach($product->images as $image)
+                        <div class="img-thumbnail">
+                            <img src="{{$image->url}}"/>
+                            <input name="images[]" value="{{$image->id}}" type="hidden">
+                            <span class="fa fa-trash remove-image" @click="removeImage" aria-hidden="true"></span>
+                        </div>
+                    @endforeach
+                @endif
                 <upload name="images[]"></upload>
             </div>
         </div>
