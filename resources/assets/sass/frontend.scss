@@ -156,9 +156,13 @@ footer {
         text-decoration: none;
     }
     .caption{
-        font-size: 1.1em;
+        font-size: 1em;
+        line-height: 1.5em;
+        height: 3em;
+        overflow: hidden;
         font-weight: lighter;
         transition: all 0.5s;
+        padding: 5px;
     }
     .caption:hover{
         color: $highlight-color;
@@ -278,7 +282,9 @@ header .navbar-default .navbar-nav li .thumbnail a{
 
 
 
-
+.pagination > li:first-child > a, .pagination > li:first-child > span, .pagination > li:last-child > a, .pagination > li:last-child > span{
+    border-radius: 0 !important;
+}
 
 
 

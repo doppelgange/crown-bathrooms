@@ -18,6 +18,7 @@ Route::auth();
 // Frontend pages, no need login
 Route::get('/', 'HomeController@index');
 Route::get('/home', 'HomeController@index');
+Route::resource('/product/search', 'Frontend\ProductSearchController');
 Route::get('/product', 'Frontend\FrontendProductController@index');
 Route::resource('/category/{category}/product', 'Frontend\FrontendProductController');
 Route::resource('/selector', 'Frontend\CartController');

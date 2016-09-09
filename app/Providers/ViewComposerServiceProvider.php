@@ -29,8 +29,10 @@ class ViewComposerServiceProvider extends ServiceProvider
 
     public function composeFrontendNavigation()
     {
-        view()->composer('layouts.frontend.header', function ($view) {
-            return $view->with('rootCategories', Category::where('parent_category_id', 0)->orderBy('name')->get());
-        });
+        view()->composer(
+            ['layouts.frontend.header','layouts.frontend.sidebar'],
+            function ($view) {
+                return $view->with('rootCategories', Category::where('parent_category_id', 0)->orderBy('name')->get());
+            });
     }
 }
