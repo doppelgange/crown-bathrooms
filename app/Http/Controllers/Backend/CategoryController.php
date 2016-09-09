@@ -7,6 +7,7 @@ use App\Resource;
 use App\Http\Controllers\Controller;
 use App\Http\Requests;
 use App\Category;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Kris\LaravelFormBuilder\FormBuilder;
 
@@ -16,12 +17,16 @@ class CategoryController extends Controller
      * Display a listing of the category.
      *
      * @param Category $category
+     * @param Request $request
      * @return Response
      * @internal param CategoryDataTable $dataTable
      */
-    public function index(Category $category)
+    public function index(Category $category, Request $request)
     {
-        $categories = $category->paginate();
+        $query = $request->get('query');
+        $categories = $category
+            ->where('name','like','%'.$query.'%')
+            ->paginate();
         return view("backend.categories.index", compact('categories'));
     }
 

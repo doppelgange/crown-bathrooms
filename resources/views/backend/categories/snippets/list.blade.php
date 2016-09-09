@@ -43,7 +43,8 @@
 
         </tbody>
     </table>
-    {!! $categories->links() !!}
-{{--@else--}}
+    {!! $categories->appends(request()->except('page'))->links() !!}
+
+    {{--@else--}}
     {{--No category is set.--}}
 @endif

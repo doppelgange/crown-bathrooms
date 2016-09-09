@@ -30,7 +30,7 @@
 
         </tbody>
     </table>
-    {!! $products->links() !!}
+    {!! $products->appends(request()->except('page'))->links() !!}
 {{--@else--}}
     {{--No product is set.--}}
 @endif

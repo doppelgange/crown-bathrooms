@@ -8,6 +8,7 @@ use App\Http\Requests\ProductRequest;
 use App\Http\Requests;
 use App\Product;
 use App\ProductVariant;
+use Illuminate\Http\Request;
 use Laracasts\Flash\Flash;
 
 class ProductController extends Controller
@@ -30,11 +31,15 @@ class ProductController extends Controller
      * Display a listing of the product.
      *
      * @param Product $product
+     * @param Request $request
      * @return Response
      */
-    public function index(Product $product)
+    public function index(Product $product, Request $request)
     {
-        $products = $product->paginate();
+        $query = $request->get('query');
+        $products = $product
+            ->where('name','like','%'.$query.'%')
+            ->paginate();
         return view('backend.products.index', compact('products'));
     }
 
