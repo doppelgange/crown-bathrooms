@@ -54,7 +54,7 @@
         @if($view =='create')
             @include('backend.products.snippets.variant_form')
         @else
-            @include('backend.products.snippets.variant_list')
+            @include('backend.products.snippets.variant_list',['variants' => $product->variants()->paginate()])
         @endif
         <button class="btn btn-primary" type="submit">Save</button>
         <button class="btn btn-warning" type="reset">Reset</button>

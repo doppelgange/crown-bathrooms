@@ -163,10 +163,17 @@ footer {
         font-weight: lighter;
         transition: all 0.5s;
         padding: 5px;
+        .badge{
+            background-color: #c4dde4;
+            transition: all 0.5s;
+        }
+
     }
     .caption:hover{
         color: $highlight-color;
-        background: $highlight-color*5;
+        .badge {
+            background-color: $highlight-color;
+        }
     }
 }
 //.price{
@@ -286,6 +293,18 @@ header .navbar-default .navbar-nav li .thumbnail a{
     border-radius: 0 !important;
 }
 
+
+
+
+
+.thumbnail-image {
+    width: 100%;
+    padding-bottom: 100%;
+    //background-image: url('/storage/upload/yWqa8_CB-119.jpg');
+    background-position: 50% 50%;
+    background-size: contain;
+    background-repeat: no-repeat;
+}
 
 
 

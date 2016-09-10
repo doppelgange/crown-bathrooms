@@ -42,7 +42,7 @@
                 </tr>
             </table>
             <h2 class="page-header">Product Variants Detail</h2>
-            @include('backend.products.snippets.variant_list')
+            @include('backend.products.snippets.variant_list',['variants' => $product->variants()->paginate()])
         </div>
     </div>
 @endsection

@@ -11,8 +11,5 @@
             </div>
         </form>
     </h1>
-
     @include('backend.products.snippets.list',compact('products'))
-
-    {{--@include('layouts.backend.snippets.datatable', ['dataTable' => $dataTable, 'buttons' => true])--}}
 @endsection

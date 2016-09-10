@@ -1,7 +1,7 @@
 <ul class="nav nav-sidebar">
     <li>
         <a href="/backend/category">
-            <span class="glyphicon glyphicon-th" aria-hidden="true"></span> Manage category
+            <span class="glyphicon glyphicon-th" aria-hidden="true"></span> Manage categories
         </a>
     </li>
     <li>
@@ -11,12 +11,17 @@
     </li>
     <li>
         <a href="/backend/product">
-            <span class="glyphicon glyphicon-barcode" aria-hidden="true"></span> Manage product
+            <span class="glyphicon glyphicon-barcode" aria-hidden="true"></span> Manage products
         </a>
     </li>
     <li>
         <a href="/backend/product/create">
             <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Create product
+        </a>
+    </li>
+    <li>
+        <a href="/backend/variant">
+            <span class="glyphicon glyphicon-barcode" aria-hidden="true"></span> Manage product variants
         </a>
     </li>
     {{--<li>--}}

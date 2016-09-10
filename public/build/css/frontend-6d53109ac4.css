@@ -129,10 +129,14 @@ footer {
   font-weight: lighter;
   transition: all 0.5s;
   padding: 5px; }
+  .product-item .caption .badge {
+    background-color: #c4dde4;
+    transition: all 0.5s; }
 
 .product-item .caption:hover {
-  color: #c46f4a;
-  background: white; }
+  color: #c46f4a; }
+  .product-item .caption:hover .badge {
+    background-color: #c46f4a; }
 
 .thumbnail-wrap {
   padding: 5px; }
@@ -231,5 +235,12 @@ header .navbar-default .navbar-nav li .thumbnail a {
 
 .pagination > li:first-child > a, .pagination > li:first-child > span, .pagination > li:last-child > a, .pagination > li:last-child > span {
   border-radius: 0 !important; }
+
+.thumbnail-image {
+  width: 100%;
+  padding-bottom: 100%;
+  background-position: 50% 50%;
+  background-size: contain;
+  background-repeat: no-repeat; }
 
 /*# sourceMappingURL=frontend.css.map */

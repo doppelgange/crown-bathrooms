@@ -4,9 +4,13 @@
     <div class="col-sm-3 product-item">
         <a href="{{route('category.{category}.product.show',[$product->category->id,$product->id])}}" target="_blank">
             <div class="thumbnail"  style="min-height: 250px">
-                <img alt="" src="{{$product->feature_image->path}}">
+                <div class="thumbnail-image" style="background-image: url('{{$product->feature_image->path}}')"></div>
                 <div class="caption">
-                    <div class="text-center product-name">{{$product->name}}</div>
+                    <div class="text-center product-name">{{$product->name}}
+                    @if($product->variants()->count()>1)
+                        <span class="badge">{{$product->variants()->count()}}</span>
+                    @endif
+                    </div>
                     <div class="price text-center">
                         <span class="amount">{{$product->price}}</span>
                     </div>
