@@ -12,9 +12,9 @@
                 <div class="row">
                     <div class="col-xs-6">
                         <product-image-slider
-                                :images="{{$product->images->toJson()}}"
-                                :feature-image = "'{{$product->feature_image}}'"
-                                :current-variant-id = "variantId"
+                                :images="{{json_encode($product->allImages())}}"
+                                :feature-image = "'{{$product->feature_image->path}}'"
+                                :current-variant-id = "currentVariantId"
                                 ></product-image-slider>
                     </div>
                     <div class="col-xs-6">

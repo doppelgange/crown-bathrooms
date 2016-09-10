@@ -11979,6 +11979,11 @@ exports.default = {
     computed: {
         variant: function variant() {
             return this.variants[this.selectedVariantIndex];
+        },
+        currentVariantId: function currentVariantId() {
+            var variantId = this.variants[this.selectedVariantIndex].id;
+            this.$parent.$broadcast('variant-change', variantId);
+            return variantId;
         }
     },
     methods: {
@@ -12145,7 +12150,7 @@ if (module.hot) {(function () {  module.hot.accept()
 })()}
 },{"vue":4,"vue-hot-reload-api":2,"vueify/lib/insert-css":5}],14:[function(require,module,exports){
 var __vueify_insert__ = require("vueify/lib/insert-css")
-var __vueify_style__ = __vueify_insert__.insert("\n.feature-image{\n    -webkit-transition: 1s;\n    transition: 1s;\n}\n.controls{\n    margin: 10px 0;\n}\n.thumbnail{\n    cursor: pointer;\n    margin-right: 10px;\n}\n")
+var __vueify_style__ = __vueify_insert__.insert("\n.feature-image[_v-3d720d54]{\n    -webkit-transition: 1s;\n    transition: 1s;\n}\n.controls[_v-3d720d54]{\n    margin: 10px 0;\n}\n.thumbnail[_v-3d720d54]{\n    cursor: pointer;\n    margin-right: 10px;\n    opacity: 0.6;\n}\n.selected[_v-3d720d54] {\n    opacity: 1;\n}\n.selected-variant[_v-3d720d54] {\n    border: 1px solid rgba(0,0,0,0.1) ;\n}\n")
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -12173,19 +12178,30 @@ exports.default = {
         }
     },
     methods: {
-        changeFeatureImage: function changeFeatureImage($index) {
-            this.featureImage = this.images[$index].path;
+        changeFeatureImage: function changeFeatureImage(index) {
+            this.featureImage = this.images[index].path;
+        }
+    },
+    events: {
+        'variant-change': function variantChange(variantId) {
+            console.log(variantId);
+            var variantImages = this.images.filter(function (item) {
+                return item.variant_id == variantId;
+            });
+            if (variantImages.length > 0) {
+                this.featureImage = variantImages[0].path;
+            }
         }
     }
 };
 if (module.exports.__esModule) module.exports = module.exports.default
-;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<div class=\"product-carousel-wrapper\">\n    <div id=\"product-carousel\" class=\"owl-carousel owl-theme owl-loaded\">\n        <div class=\"item\">\n            <img :src=\"featureImage\" class=\"img-responsive feature-image\" alt=\"\"></div>\n        <div class=\"controls\">\n            <img v-for=\"image in images\" :src=\"image.path\" class=\"thumbnail col-md-2\" @click=\"changeFeatureImage($index)\">\n        </div>\n    </div>\n</div>\n"
+;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<div class=\"product-carousel-wrapper\" _v-3d720d54=\"\">\n    <div id=\"product-carousel\" class=\"owl-carousel owl-theme owl-loaded\" _v-3d720d54=\"\">\n        <div class=\"item\" _v-3d720d54=\"\">\n            <img :src=\"featureImage\" class=\"img-responsive feature-image\" _v-3d720d54=\"\"></div>\n        <div class=\"controls\" _v-3d720d54=\"\">\n            <img v-for=\"image in images\" :src=\"image.path\" class=\"thumbnail col-md-2\" :class=\"{ 'selected': image.path == featureImage, 'selected-variant': image.variant_id == currentVariantId }\" @click=\"changeFeatureImage($index)\" _v-3d720d54=\"\">\n        </div>\n    </div>\n</div>\n"
 if (module.hot) {(function () {  module.hot.accept()
   var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), true)
   if (!hotAPI.compatible) return
   module.hot.dispose(function () {
-    __vueify_insert__.cache["\n.feature-image{\n    -webkit-transition: 1s;\n    transition: 1s;\n}\n.controls{\n    margin: 10px 0;\n}\n.thumbnail{\n    cursor: pointer;\n    margin-right: 10px;\n}\n"] = false
+    __vueify_insert__.cache["\n.feature-image[_v-3d720d54]{\n    -webkit-transition: 1s;\n    transition: 1s;\n}\n.controls[_v-3d720d54]{\n    margin: 10px 0;\n}\n.thumbnail[_v-3d720d54]{\n    cursor: pointer;\n    margin-right: 10px;\n    opacity: 0.6;\n}\n.selected[_v-3d720d54] {\n    opacity: 1;\n}\n.selected-variant[_v-3d720d54] {\n    border: 1px solid rgba(0,0,0,0.1) ;\n}\n"] = false
     document.head.removeChild(__vueify_style__)
   })
   if (!module.hot.data) {

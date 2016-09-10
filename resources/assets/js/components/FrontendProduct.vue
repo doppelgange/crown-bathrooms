@@ -21,6 +21,11 @@
         computed:{
             variant: function(){
                 return this.variants[this.selectedVariantIndex]
+            },
+            currentVariantId: function(){
+                var variantId = this.variants[this.selectedVariantIndex].id
+                this.$parent.$broadcast('variant-change',variantId)
+                return variantId
             }
         },
         methods:{
