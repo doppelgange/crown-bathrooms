@@ -39,18 +39,15 @@
                                 <li><label>Width:</label> @{{variant.width}}</li>
                                 <li><label>Depth:</label> @{{variant.depth}}</li>
                             </ul>
-                            <span class="price">
-                                <span class="amount" v-if="variant.price>0">@{{variant.price}}</span>
-                                <span class="amount" v-else>Price is not available</span>
-                            </span>
-                            <ul class="list-inline product-links">
-                                <li><button href="#" class="btn btn-success" :disabled="buttonDisabled" @click="addToCart(variant.id,$event)">
-                                        <i class="fa fa-heart"></i>
-                                        <span v-if="!buttonDisabled">Add to selector</span>
-                                        <span v-else>Added to selector</span>
-                                    </button>
-                                </li>
-                            </ul>
+                            <div class="price">
+                                <div class="amount" v-if="variant.price>0">Price: @{{variant.price}}</div>
+                                <div class="amount" v-else>Price is not available</div>
+                            </div>
+                            <button href="#" class="btn btn-success" :disabled="buttonDisabled" @click="addToCart(variant.id,$event)">
+                                <i class="fa fa-heart"></i>
+                                <span v-if="!buttonDisabled">Add to selector</span>
+                                <span v-else>Added to selector</span>
+                            </button>
                         </div>
                     </div>
                 </div>

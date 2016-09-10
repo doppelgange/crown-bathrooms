@@ -124,7 +124,7 @@ footer {
 .product-item .caption {
   font-size: 1em;
   line-height: 1.5em;
-  height: 3em;
+  height: 4em;
   overflow: hidden;
   font-weight: lighter;
   transition: all 0.5s;
@@ -137,6 +137,12 @@ footer {
   color: #c46f4a; }
   .product-item .caption:hover .badge {
     background-color: #c46f4a; }
+
+.price .amount {
+  color: #e6494f;
+  font-weight: bold;
+  font-size: 2em;
+  padding: 0 0 10px 0; }
 
 .thumbnail-wrap {
   padding: 5px; }
